@@ -1,0 +1,70 @@
+import React from "react";
+import { View } from "react-native";
+
+import { Accordion } from "@/components/ui/Accordion";
+import { Badge } from "@/components/ui/Badge";
+import { EmptyState } from "@/components/ui/ScreenState";
+import { Text } from "@/components/ui/Text";
+import { spacing } from "@/theme/tokens";
+import { titleCase } from "@/lib/format";
+import type { DoshaItem, YogaItem } from "@/api/types/models";
+
+export function YogaList({ yogas, emptyLabel }: { yogas: YogaItem[]; emptyLabel: string }) {
+  if (!yogas.length) {
+    return <EmptyState title={emptyLabel} body="This placement is not prominent in your chart." />;
+  }
+  return (
+    <View>
+      {yogas.map((yoga, index) => (
+        <Accordion
+          key={`${yoga.code}-${index}`}
+          title={yoga.name}
+          subtitle={yoga.category ? titleCase(yoga.category) : undefined}
+          badge={typeof yoga.strength === "number" ? `Strength ${Math.round(yoga.strength)}` : undefined}
+          defaultOpen={index === 0}
+        >
+          <Text variant="small" tone="muted">
+            {yoga.description}
+          </Text>
+          {yoga.insight ? (
+            <Text variant="small" tone="gold">
+              {yoga.insight}
+            </Text>
+          ) : null}
+        </Accordion>
+      ))}
+    </View>
+  );
+}
+
+export function DoshaList({ doshas }: { doshas: DoshaItem[] }) {
+  if (!doshas.length) {
+    return <EmptyState title="No significant doshas found" body="Your chart does not show major dosha patterns." />;
+  }
+  return (
+    <View style={{ gap: spacing.md }}>
+      {doshas.map((dosha, index) => (
+        <View key={`${dosha.code}-${index}`} style={{ gap: 4 }}>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
+            <Text variant="label">{dosha.name}</Text>
+            <Badge
+              label={dosha.present ? (dosha.severity ? titleCase(dosha.severity) : "Present") : "Not present"}
+              tone={dosha.present ? "ruby" : "emerald"}
+              size="sm"
+            />
+          </View>
+          {dosha.notes ? (
+            <Text variant="small" tone="muted">
+              {dosha.notes}
+            </Text>
+          ) : null}
+          {dosha.insight ? (
+            <Text variant="caption" tone="gold">
+              {dosha.insight}
+            </Text>
+          ) : null}
+        </View>
+      ))}
+    </View>
+  );
+}
