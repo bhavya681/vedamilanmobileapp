@@ -27,7 +27,7 @@ export function ReportScreen({
   disclaimer?: string;
 }) {
   return (
-    <Screen title={title} subtitle={subtitle}>
+    <Screen title={title} subtitle={subtitle} showBack>
       {query.isLoading ? (
         <LoadingState variant="detail" />
       ) : query.isError ? (

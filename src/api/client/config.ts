@@ -5,8 +5,19 @@ function normalizeBaseUrl(value: string | undefined): string {
   return raw.replace(/\/+$/, "");
 }
 
+function apiRoot(baseUrl: string): string {
+  return /\/api$/i.test(baseUrl) ? baseUrl : `${baseUrl}/api`;
+}
+
+function siteOrigin(value: string): string {
+  return value.replace(/\/api\/?$/i, "").replace(/\/+$/, "");
+}
+
 export const API_URL = normalizeBaseUrl(process.env.EXPO_PUBLIC_API_URL);
-export const WEB_URL = normalizeBaseUrl(process.env.EXPO_PUBLIC_WEB_URL || API_URL);
+export const API_BASE_URL = apiRoot(API_URL);
+export const WEB_URL = siteOrigin(
+  normalizeBaseUrl(process.env.EXPO_PUBLIC_WEB_URL || API_URL),
+);
 
 export const REQUEST_TIMEOUT_MS = 25_000;
 export const UPLOAD_TIMEOUT_MS = 60_000;
@@ -19,7 +30,7 @@ export const isProductionApi = API_URL.includes("vedamilan-lihn.vercel.app");
 
 /** Builds an absolute API URL from a path beginning with "/". */
 export function apiUrl(path: string): string {
-  return `${API_URL}${path.startsWith("/") ? path : `/${path}`}`;
+  return `${API_BASE_URL}${path.startsWith("/") ? path : `/${path}`}`;
 }
 
 export function withQuery(path: string, query?: Record<string, unknown>): string {

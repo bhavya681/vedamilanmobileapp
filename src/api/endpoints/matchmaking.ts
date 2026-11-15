@@ -1,7 +1,6 @@
 import { request } from "@/api/client/http";
 import type {
   MatchSearchResponse,
-  Paginated,
   Profile,
   RankedMatch,
 } from "@/api/types/models";
@@ -28,11 +27,23 @@ export type MatchQuery = {
 
 export type LikeItem = {
   id?: string;
+  _id?: string;
+  fromUserId?: string;
   toUserId?: string;
   type?: string;
   createdAt?: string;
   name?: string;
+  city?: string;
+  profession?: string;
   photo?: string | null;
+  mutual?: boolean;
+  [key: string]: unknown;
+};
+
+export type LikesResponse = {
+  sent?: LikeItem[];
+  received?: LikeItem[];
+  items?: LikeItem[];
   [key: string]: unknown;
 };
 
@@ -47,9 +58,12 @@ export type ShortlistItem = {
 
 export type VisitorItem = {
   userId?: string;
+  visitorUserId?: string;
+  profileUserId?: string;
   name?: string;
   photo?: string | null;
   visitedAt?: string;
+  lastVisitedAt?: string;
   [key: string]: unknown;
 };
 
@@ -72,7 +86,7 @@ export const matchmakingApi = {
   getCandidate: (userId: string) =>
     request<{ profile: Profile & Partial<RankedMatch> }>(`/matches/${encodeURIComponent(userId)}`),
 
-  listLikes: () => request<Paginated<LikeItem> | LikeItem[]>("/likes"),
+  listLikes: () => request<LikesResponse>("/likes"),
 
   like: (toUserId: string, type: "LIKE" | "SUPER_LIKE" | "INTEREST" = "LIKE") =>
     request<LikeItem>("/likes", { method: "POST", body: { toUserId, type } }),

@@ -20,6 +20,7 @@ export type SessionCredentials = {
 
 let credentials: SessionCredentials = { token: null, cookie: null, mode: "bearer" };
 let hydrated = false;
+let hydration: Promise<SessionCredentials> | null = null;
 
 async function secureAvailable(): Promise<boolean> {
   try {
@@ -69,21 +70,27 @@ export const tokenStore = {
 
   async hydrate(): Promise<SessionCredentials> {
     if (hydrated) return credentials;
-    hydrated = true;
-    const [token, cookie, mode] = await Promise.all([
-      readKey(TOKEN_KEY),
-      readKey(COOKIE_KEY),
-      readKey(MODE_KEY),
-    ]);
-    credentials = {
-      token: token || null,
-      cookie: cookie || null,
-      mode: mode === "cookie" ? "cookie" : "bearer",
-    };
-    return credentials;
+    if (!hydration) {
+      hydration = (async () => {
+        const [token, cookie, mode] = await Promise.all([
+          readKey(TOKEN_KEY),
+          readKey(COOKIE_KEY),
+          readKey(MODE_KEY),
+        ]);
+        credentials = {
+          token: token || null,
+          cookie: cookie || null,
+          mode: mode === "cookie" ? "cookie" : "bearer",
+        };
+        hydrated = true;
+        return credentials;
+      })();
+    }
+    return hydration;
   },
 
   async set(next: Partial<SessionCredentials>): Promise<void> {
+    await tokenStore.hydrate();
     credentials = {
       token: next.token !== undefined ? next.token : credentials.token,
       cookie: next.cookie !== undefined ? next.cookie : credentials.cookie,
@@ -98,6 +105,7 @@ export const tokenStore = {
   },
 
   async clear(): Promise<void> {
+    await tokenStore.hydrate().catch(() => undefined);
     credentials = { token: null, cookie: null, mode: "bearer" };
     hydrated = true;
     await Promise.all([writeKey(TOKEN_KEY, null), writeKey(COOKIE_KEY, null), writeKey(MODE_KEY, null)]);

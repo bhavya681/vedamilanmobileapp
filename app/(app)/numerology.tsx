@@ -14,7 +14,7 @@ export default function NumerologyScreen() {
   const { numberCards, hasDob, ...rest } = numerology.data ?? { hasDob: true };
 
   return (
-    <Screen title="Numerology" subtitle="Numbers derived from your birth date">
+    <Screen title="Numerology" subtitle="Numbers derived from your birth date" showBack>
       {numerology.isLoading ? (
         <LoadingState variant="detail" />
       ) : numerology.isError ? (

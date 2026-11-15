@@ -7,7 +7,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Text } from "@/components/ui/Text";
 import { useTheme } from "@/theme/ThemeProvider";
-import { spacing } from "@/theme/tokens";
+import { radii, spacing } from "@/theme/tokens";
 
 const ICONS = {
   index: Home,
@@ -73,19 +73,19 @@ export function TabBar({ state, emitter, navigateToTab }: BottomTabBarProps) {
                   styles.center,
                   {
                     backgroundColor: focused ? palette.gold : palette.temple,
-                    shadowColor: palette.gold,
+                    shadowColor: focused ? palette.gold : "transparent",
                   },
                 ]}
               >
                 <Icon size={20} color={focused ? palette.onAccent : palette.inverse} />
               </View>
             ) : (
-              <Icon size={21} color={focused ? palette.gold : palette.textFaint} strokeWidth={focused ? 2.4 : 1.8} />
+              <Icon size={20} color={focused ? palette.gold : palette.textFaint} strokeWidth={focused ? 2.2 : 1.6} />
             )}
             <Text
-              variant="micro"
+              variant="caption"
               weight={focused ? "semibold" : "medium"}
-              style={{ color: focused ? palette.gold : palette.textFaint, marginTop: 3 }}
+              style={{ color: focused ? palette.gold : palette.textFaint, marginTop: 4 }}
             >
               {LABELS[name] ?? name}
             </Text>
@@ -100,25 +100,28 @@ const styles = StyleSheet.create({
   wrap: {
     flexDirection: "row",
     borderTopWidth: StyleSheet.hairlineWidth,
-    paddingTop: spacing.sm,
+    paddingTop: spacing.xs,
     paddingHorizontal: spacing.sm,
+    minHeight: 64,
   },
   item: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    minHeight: 44,
+    minHeight: 48,
+    paddingVertical: spacing.xs,
   },
   center: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 46,
+    height: 46,
+    borderRadius: radii.xxl,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: -18,
-    shadowOpacity: 0.35,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 6,
+    marginTop: -20,
+    shadowOpacity: 0.4,
+    shadowRadius: 14,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 8,
+    borderWidth: 1,
   },
 });

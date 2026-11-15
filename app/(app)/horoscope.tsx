@@ -21,7 +21,7 @@ export default function HoroscopeScreen() {
   const busy = kundli.isLoading || gochar.isLoading;
 
   return (
-    <Screen title="Daily sky" subtitle="Your chart, read against today's transits">
+    <Screen title="Daily sky" subtitle="Your chart, read against today's transits" showBack>
       {busy ? (
         <LoadingState variant="detail" />
       ) : kundli.error && !kundli.payload ? (

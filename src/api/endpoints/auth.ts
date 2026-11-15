@@ -1,5 +1,5 @@
-import { ApiError } from "@/api/client/errors";
-import { request, requestRaw } from "@/api/client/http";
+import { ApiError, kindFromStatus } from "@/api/client/errors";
+import { requestRaw, type RequestOptions } from "@/api/client/http";
 import { extractAuthCookie, tokenStore } from "@/lib/auth/tokenStore";
 import type { AuthMe } from "@/api/types/models";
 
@@ -32,6 +32,41 @@ async function readAuthBody(response: Response): Promise<BetterAuthBody> {
     });
   }
   return body;
+}
+
+/**
+ * Better Auth endpoints return their own payloads (not the mobile
+ * `{ success, data }` envelope). Session lookup uses this raw shape.
+ */
+async function readSession(response: Response): Promise<AuthMe> {
+  let body: Record<string, unknown> = {};
+  try {
+    body = (await response.json()) as Record<string, unknown>;
+  } catch {
+    body = {};
+  }
+
+  if (!response.ok || body.authenticated !== true || typeof body.user !== "object") {
+    throw new ApiError({
+      kind: kindFromStatus(response.status),
+      status: response.status,
+      code: (body.code as string | undefined) ?? "SESSION_UNAVAILABLE",
+      message:
+        (body.message as string | undefined) ??
+        (response.status === 401
+          ? "Your session has expired. Please sign in again."
+          : "We could not load your session."),
+    });
+  }
+
+  return body as unknown as AuthMe;
+}
+
+async function authRequest(path: string, options: RequestOptions = {}): Promise<void> {
+  const { response } = await requestRaw(path, options);
+  if (!response.ok) {
+    await readAuthBody(response);
+  }
 }
 
 async function establishSession(response: Response, nextToken: string | null): Promise<AuthMe> {
@@ -67,7 +102,8 @@ async function establishSession(response: Response, nextToken: string | null): P
 
 export const authApi = {
   async me(): Promise<AuthMe> {
-    return request<AuthMe>("/auth/me");
+    const { response } = await requestRaw("/auth/me");
+    return readSession(response);
   },
 
   async signIn(input: { email: string; password: string }): Promise<AuthMe> {
@@ -102,7 +138,7 @@ export const authApi = {
 
   async signOut(): Promise<void> {
     try {
-      await request("/auth/sign-out", { method: "POST", body: {} });
+      await authRequest("/auth/sign-out", { method: "POST", body: {} });
     } catch {
       // Local credentials are cleared regardless of network state.
     } finally {
@@ -111,7 +147,7 @@ export const authApi = {
   },
 
   async requestPasswordResetOtp(email: string): Promise<void> {
-    await request("/auth/email-otp/request-password-reset", {
+    await authRequest("/auth/email-otp/request-password-reset", {
       method: "POST",
       anonymous: true,
       body: { email: email.trim().toLowerCase() },
@@ -119,7 +155,7 @@ export const authApi = {
   },
 
   async resetPasswordWithOtp(input: { email: string; otp: string; password: string }): Promise<void> {
-    await request("/auth/email-otp/reset-password", {
+    await authRequest("/auth/email-otp/reset-password", {
       method: "POST",
       anonymous: true,
       body: {
@@ -131,7 +167,7 @@ export const authApi = {
   },
 
   async sendVerificationOtp(email: string): Promise<void> {
-    await request("/auth/email-otp/send-verification-otp", {
+    await authRequest("/auth/email-otp/send-verification-otp", {
       method: "POST",
       anonymous: true,
       body: { email: email.trim().toLowerCase(), type: "email-verification" },
@@ -139,7 +175,7 @@ export const authApi = {
   },
 
   async verifyEmailOtp(input: { email: string; otp: string }): Promise<void> {
-    await request("/auth/email-otp/verify-email", {
+    await authRequest("/auth/email-otp/verify-email", {
       method: "POST",
       anonymous: true,
       body: { email: input.email.trim().toLowerCase(), otp: input.otp.trim() },

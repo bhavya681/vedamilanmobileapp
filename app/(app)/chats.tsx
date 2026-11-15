@@ -10,10 +10,12 @@ import { EmptyState, ErrorState, LoadingState } from "@/components/ui/ScreenStat
 import { Screen } from "@/components/ui/Screen";
 import { Text } from "@/components/ui/Text";
 import { timeAgo } from "@/lib/format";
+import { useTheme } from "@/theme/ThemeProvider";
 import { spacing } from "@/theme/tokens";
 
 export default function ChatsScreen() {
   const router = useRouter();
+  const { palette } = useTheme();
   const query = useQuery({ queryKey: ["chats"], queryFn: () => chatApi.listChats(), refetchInterval: 30_000 });
   const chats = query.data?.chats ?? [];
 
@@ -52,8 +54,8 @@ export default function ChatsScreen() {
                     {chat.preview || "Say hello"}
                   </Text>
                   {chat.unread > 0 ? (
-                    <View style={{ minWidth: 18, height: 18, borderRadius: 9, paddingHorizontal: 4, alignItems: "center", justifyContent: "center", backgroundColor: "#D4AF37" }}>
-                      <Text variant="micro" style={{ color: "#14110E" }}>
+                    <View style={{ minWidth: 18, height: 18, borderRadius: 9, paddingHorizontal: 4, alignItems: "center", justifyContent: "center", backgroundColor: palette.gold }}>
+                      <Text variant="micro" style={{ color: palette.onGold }}>
                         {chat.unread}
                       </Text>
                     </View>

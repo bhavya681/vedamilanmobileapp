@@ -121,6 +121,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
   },
   accessory: {
-    paddingLeft: spacing.sm,
+    minWidth: 44,
+    minHeight: 44,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

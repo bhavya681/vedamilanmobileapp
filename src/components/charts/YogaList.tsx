@@ -7,7 +7,13 @@ import { EmptyState } from "@/components/ui/ScreenState";
 import { Text } from "@/components/ui/Text";
 import { spacing } from "@/theme/tokens";
 import { titleCase } from "@/lib/format";
-import type { DoshaItem, YogaItem } from "@/api/types/models";
+import type { DoshaItem, YogaInsightDetail, YogaItem } from "@/api/types/models";
+
+function insightText(insight?: string | YogaInsightDetail) {
+  if (!insight) return null;
+  if (typeof insight === "string") return insight;
+  return insight.meaning ?? insight.watchFor ?? insight.activationNow ?? insight.engineNote ?? null;
+}
 
 export function YogaList({ yogas, emptyLabel }: { yogas: YogaItem[]; emptyLabel: string }) {
   if (!yogas.length) {
@@ -26,9 +32,9 @@ export function YogaList({ yogas, emptyLabel }: { yogas: YogaItem[]; emptyLabel:
           <Text variant="small" tone="muted">
             {yoga.description}
           </Text>
-          {yoga.insight ? (
+          {insightText(yoga.insight) ? (
             <Text variant="small" tone="gold">
-              {yoga.insight}
+              {insightText(yoga.insight)}
             </Text>
           ) : null}
         </Accordion>

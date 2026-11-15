@@ -17,6 +17,20 @@ export const brand = {
   ruby: "#C41E3A",
 } as const;
 
+export const onDark = {
+  text: "#FAF6EE",
+  muted: "#C9BFB0",
+  faint: "#8F8678",
+  gold: "#D4AF37",
+  danger: "#FCA5A5",
+  border: "#D4AF3733",
+} as const;
+
+export const heroGradients = {
+  light: ["#2A2115", "#1A1611"],
+  dark: ["#241B10", "#171310"],
+} as const;
+
 export type ColorScheme = "light" | "dark";
 
 export type Palette = {
@@ -41,6 +55,7 @@ export type Palette = {
   ruby: string;
   rose: string;
   onAccent: string;
+  onGold: string;
   tabBar: string;
   tabBorder: string;
   skeleton: string;
@@ -71,6 +86,7 @@ const light: Palette = {
   ruby: "#BE123C",
   rose: "#B76E79",
   onAccent: "#FFFFFF",
+  onGold: "#14110E",
   tabBar: "rgba(250, 246, 238, 0.94)",
   tabBorder: "rgba(20, 17, 14, 0.08)",
   skeleton: "#E6DCC8",
@@ -101,6 +117,7 @@ const dark: Palette = {
   ruby: "#FB7185",
   rose: "#D4A0A8",
   onAccent: "#14110E",
+  onGold: "#14110E",
   tabBar: "rgba(18, 15, 12, 0.94)",
   tabBorder: "rgba(247, 241, 227, 0.08)",
   skeleton: "#221C16",

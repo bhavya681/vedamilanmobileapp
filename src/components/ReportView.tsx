@@ -39,6 +39,7 @@ function humanKey(key: string): string {
 }
 
 function ValueView({ value, depth }: { value: unknown; depth: number }) {
+  const { palette } = useTheme();
   if (value === null || value === undefined) return null;
   if (isScalar(value)) {
     return (
@@ -70,7 +71,7 @@ function ValueView({ value, depth }: { value: unknown; depth: number }) {
         {value.map((item, i) => (
           <View
             key={i}
-            style={{ paddingLeft: spacing.sm, borderLeftWidth: 2, borderLeftColor: "#D4AF3740", gap: 4 }}
+            style={{ paddingLeft: spacing.sm, borderLeftWidth: 2, borderLeftColor: palette.gold, gap: 4 }}
           >
             <ValueView value={item} depth={depth + 1} />
           </View>
@@ -109,6 +110,7 @@ export function ReportView({
   depth?: number;
 }) {
   const [open, setOpen] = useState(defaultOpen);
+  const { palette } = useTheme();
 
   const entries =
     isPlainObject(data) && !title
@@ -117,7 +119,7 @@ export function ReportView({
 
   if (title) {
     return (
-      <View style={{ borderTopWidth: depth === 0 ? 0 : 1, borderColor: "#8882", paddingTop: depth === 0 ? 0 : spacing.md }}>
+      <View style={{ borderTopWidth: depth === 0 ? 0 : 1, borderColor: palette.border, paddingTop: depth === 0 ? 0 : spacing.md }}>
         <Pressable
           onPress={() => setOpen((v) => !v)}
           accessibilityRole="button"
@@ -125,7 +127,7 @@ export function ReportView({
           style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", minHeight: 32 }}
         >
           <Text variant="label">{title}</Text>
-          <ChevronDown size={16} color="#8A8072" style={{ transform: [{ rotate: open ? "180deg" : "0deg" }] }} />
+          <ChevronDown size={16} color={palette.textFaint} style={{ transform: [{ rotate: open ? "180deg" : "0deg" }] }} />
         </Pressable>
         {open ? (
           <View style={{ paddingTop: spacing.xs }}>

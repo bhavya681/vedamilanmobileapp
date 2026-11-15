@@ -22,7 +22,7 @@ export default function YogasScreen() {
   const raja = extras.data?.rajaYogas ?? [];
 
   return (
-    <Screen title="Yogas & doshas" subtitle="Planetary combinations in your chart">
+    <Screen title="Yogas & doshas" subtitle="Planetary combinations in your chart" showBack>
       <View style={{ flexDirection: "row", gap: 8, marginBottom: 16 }}>
         {TABS.map((t) => (
           <Chip key={t} label={t} selected={tab === t} onPress={() => setTab(t)} />

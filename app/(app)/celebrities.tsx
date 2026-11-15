@@ -18,7 +18,7 @@ export default function CelebritiesScreen() {
     : (raw?.celebrities ?? []);
 
   return (
-    <Screen title="Celebrity charts" subtitle="Study the sky behind familiar names">
+    <Screen title="Celebrity charts" subtitle="Study the sky behind familiar names" showBack>
       {query.isLoading ? (
         <LoadingState variant="list" />
       ) : query.isError ? (

@@ -1,3 +1,5 @@
+import { Platform } from "react-native";
+
 import { tokenStore } from "@/lib/auth/tokenStore";
 
 import { apiUrl, REQUEST_TIMEOUT_MS, UPLOAD_TIMEOUT_MS, WEB_URL } from "./config";
@@ -69,9 +71,14 @@ async function execute(path: string, options: RequestOptions): Promise<Response>
   options.signal?.addEventListener("abort", onExternalAbort);
 
   try {
+    await tokenStore.hydrate();
     return await fetch(buildUrl(path, options.query), {
       method,
       headers: buildHeaders(options),
+      // Web sends cookies when available (same-origin production web app) and
+      // still uses the bearer token for cross-origin Expo web. Native has no
+      // browser cookie jar, so omit credentials there.
+      credentials: Platform.OS === "web" ? "include" : "omit",
       body:
         options.body === undefined
           ? undefined

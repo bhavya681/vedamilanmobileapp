@@ -43,7 +43,7 @@ export class ApiError extends Error {
       case "timeout":
         return "The connection took too long. Please try again.";
       case "unauthorized":
-        return "Your session has expired. Please sign in again.";
+        return this.message || "Your session has expired. Please sign in again.";
       case "forbidden":
         return this.message || "You do not have access to this.";
       case "not_found":

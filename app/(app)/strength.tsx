@@ -19,7 +19,7 @@ export default function StrengthScreen() {
   const query = useAstrologyModule(tab);
 
   return (
-    <Screen title="Planetary strength" subtitle="Shadbala and graha bala from your chart">
+    <Screen title="Planetary strength" subtitle="Shadbala and graha bala from your chart" showBack>
       <View style={{ flexDirection: "row", gap: 8, marginBottom: 16 }}>
         {TABS.map((t) => (
           <Chip key={t.key} label={t.label} selected={tab === t.key} onPress={() => setTab(t.key)} />

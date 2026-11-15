@@ -8,15 +8,23 @@ import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Text } from "@/components/ui/Text";
 import { DashaAccordion, DashaTimeline } from "@/components/charts/DashaTimeline";
 import { useHoroscope } from "@/hooks/useAstrology";
-import { formatDate } from "@/lib/format";
+import type { DashaLord } from "@/api/types/models";
+import { formatDashaBalance, formatDate } from "@/lib/format";
 import { spacing } from "@/theme/tokens";
+
+function lordLabel(lord: DashaLord | null | undefined) {
+  if (!lord) return "—";
+  if (typeof lord === "string") return lord;
+  return lord.lord ?? lord.planet ?? "—";
+}
 
 export default function DashaScreen() {
   const kundli = useHoroscope(true);
   const dasha = kundli.payload?.dasha;
+  const balance = dasha?.balanceAtBirth ? formatDashaBalance(dasha.balanceAtBirth) : null;
 
   return (
-    <Screen title="Vimshottari dasha" subtitle="The planetary periods that shape your timeline">
+    <Screen title="Vimshottari dasha" subtitle="The planetary periods that shape your timeline" showBack>
       {kundli.isLoading ? (
         <LoadingState variant="detail" />
       ) : kundli.error && !dasha ? (
@@ -29,13 +37,13 @@ export default function DashaScreen() {
             <Text variant="micro" tone="faint">
               CURRENT MAHADASHA
             </Text>
-            <Text variant="heading">{dasha.currentMaha ?? "—"}</Text>
+            <Text variant="heading">{lordLabel(dasha.currentMaha)}</Text>
             <Text variant="caption" tone="muted">
-              Antardasha · {dasha.currentAntar ?? "—"}
+              Antardasha · {lordLabel(dasha.currentAntar)}
             </Text>
-            {dasha.balanceAtBirth ? (
+            {balance ? (
               <Text variant="caption" tone="faint">
-                Balance at birth: {dasha.balanceAtBirth}
+                Balance at birth: {balance}
               </Text>
             ) : null}
           </Card>

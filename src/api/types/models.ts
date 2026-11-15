@@ -119,13 +119,23 @@ export type Planet = {
   degree?: number;
 };
 
+export type YogaInsightDetail = {
+  meaning?: string;
+  whenActivates?: string;
+  watchFor?: string;
+  lifeAreas?: string[];
+  activationNow?: string;
+  engineNote?: string;
+  exemplar?: Record<string, unknown>;
+};
+
 export type YogaItem = {
   code: string;
   name: string;
   category: string;
   strength?: number;
   description: string;
-  insight?: string;
+  insight?: string | YogaInsightDetail;
 };
 
 export type DoshaItem = {
@@ -162,9 +172,18 @@ export type DashaPeriod = {
   [key: string]: unknown;
 };
 
+export type DashaBalanceAtBirth = {
+  lord?: string;
+  yearsRemaining?: number;
+  nakshatra?: string;
+  [key: string]: unknown;
+};
+
+export type DashaLord = string | { lord?: string; planet?: string; [key: string]: unknown };
+
 export type Dasha = {
   system?: string;
-  balanceAtBirth?: string;
+  balanceAtBirth?: string | DashaBalanceAtBirth;
   periods?: DashaPeriod[];
   currentMaha?: string | null;
   currentAntar?: string | null;

@@ -11,6 +11,7 @@ import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Text } from "@/components/ui/Text";
 import { useMuhurta, usePanchanga } from "@/hooks/useAstrology";
 import { useProfileBundle } from "@/hooks/useProfile";
+import { formatTimeOfDay, titleCase } from "@/lib/format";
 import { useTheme } from "@/theme/ThemeProvider";
 import { spacing } from "@/theme/tokens";
 
@@ -34,7 +35,7 @@ export default function PanchangaScreen() {
   const data = panchanga.data;
 
   return (
-    <Screen title="Panchanga" subtitle={bundle.data?.birthDetails?.placeName ?? "Vedic almanac"}>
+    <Screen title="Panchanga" subtitle={bundle.data?.birthDetails?.placeName ?? "Vedic almanac"} showBack>
       <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: spacing.lg }}>
         <Pressable
           onPress={() => setDate((d) => subDays(d, 1))}
@@ -98,7 +99,7 @@ export default function PanchangaScreen() {
                   <Text variant="micro" tone="faint">
                     SUNRISE
                   </Text>
-                  <Text variant="small">{data?.sunrise ?? "—"}</Text>
+                  <Text variant="small">{formatTimeOfDay(data?.sunrise)}</Text>
                 </View>
               </View>
               <View style={{ flex: 1, flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
@@ -107,13 +108,13 @@ export default function PanchangaScreen() {
                   <Text variant="micro" tone="faint">
                     SUNSET
                   </Text>
-                  <Text variant="small">{data?.sunset ?? "—"}</Text>
+                  <Text variant="small">{formatTimeOfDay(data?.sunset)}</Text>
                 </View>
               </View>
             </View>
             {data?.moonrise ? (
               <Text variant="caption" tone="muted">
-                Moonrise {String(data.moonrise)}
+                Moonrise {formatTimeOfDay(data.moonrise)}
               </Text>
             ) : null}
           </Card>
@@ -141,17 +142,30 @@ export default function PanchangaScreen() {
             ) : muhurta.data?.windows?.length ? (
               muhurta.data.windows.map((window, index) => (
                 <View key={index} style={{ borderTopWidth: 1, borderTopColor: palette.border, paddingTop: spacing.sm, gap: 2 }}>
-                  <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                  <View style={{ flexDirection: "row", justifyContent: "space-between", gap: spacing.md }}>
                     <Text variant="small" weight="semibold">
-                      {window.label ?? window.activity ?? "Window"}
+                      {window.rating ? `${titleCase(window.rating)} window` : window.label ?? window.activity ?? "Window"}
                     </Text>
-                    <Text variant="caption" tone="gold">
-                      {window.start && window.end ? `${window.start} – ${window.end}` : window.quality ?? ""}
+                    <Text variant="caption" tone={window.rating === "avoid" ? "ruby" : "gold"}>
+                      {window.startTime && window.endTime
+                        ? `${window.startTime} – ${window.endTime}`
+                        : window.start && window.end
+                          ? `${window.start} – ${window.end}`
+                          : window.quality ?? ""}
                     </Text>
                   </View>
-                  {window.notes ? (
+                  {window.reasons?.length ? (
+                    <Text variant="caption" tone="muted">
+                      {window.reasons.join(" · ")}
+                    </Text>
+                  ) : window.notes ? (
                     <Text variant="caption" tone="muted">
                       {window.notes}
+                    </Text>
+                  ) : null}
+                  {window.cautions?.length ? (
+                    <Text variant="caption" tone="ruby">
+                      {window.cautions.join(" · ")}
                     </Text>
                   ) : null}
                 </View>

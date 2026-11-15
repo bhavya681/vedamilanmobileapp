@@ -61,5 +61,10 @@ const styles = StyleSheet.create({
     borderRadius: radii.xl,
     borderWidth: StyleSheet.hairlineWidth,
     overflow: "hidden",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 2,
   },
 });

@@ -15,9 +15,22 @@ import { useToast } from "@/components/feedback/ToastProvider";
 import { formatDate } from "@/lib/format";
 import { spacing } from "@/theme/tokens";
 
-type Person = { otherUserId: string; name?: string; photo?: string | null; message?: string; createdAt?: string };
+type Person = {
+  otherUserId: string;
+  name?: string;
+  photo?: string | null;
+  message?: string;
+  createdAt?: string;
+  city?: string;
+  profession?: string;
+  age?: number;
+};
 type Hub = {
-  interested?: Person[];
+  interested?: {
+    sent?: Array<Person & { id: string }>;
+    received?: Array<Person & { id: string }>;
+    mutual?: Person[];
+  };
   requests?: { received?: Array<Person & { id: string }>; sent?: Array<Person & { id: string }> };
   connected?: Array<Person & { id: string; connectedAt?: string }>;
 };
@@ -101,9 +114,18 @@ export default function ConnectionsScreen() {
         <View style={{ gap: spacing.lg }}>
           {section("Requests received", hub.requests?.received ?? [], true)}
           {section("Requests sent", hub.requests?.sent ?? [], false)}
-          {section("Interested in you", hub.interested ?? [], false)}
+          {section("Interested in you", hub.interested?.received ?? [], false)}
+          {section("Interest you sent", hub.interested?.sent ?? [], false)}
+          {section("Mutual interest", hub.interested?.mutual ?? [], false)}
           {section("Connected", hub.connected ?? [], false)}
-          {!hub.requests?.received?.length && !hub.connected?.length ? (
+          {![
+            hub.requests?.received?.length,
+            hub.requests?.sent?.length,
+            hub.interested?.received?.length,
+            hub.interested?.sent?.length,
+            hub.interested?.mutual?.length,
+            hub.connected?.length,
+          ].some(Boolean) ? (
             <EmptyState title="Build your network" body="Send interests from Discover to start connecting." />
           ) : null}
           <Button label="Find matches" variant="gold" onPress={() => router.push("/(tabs)/discover")} />

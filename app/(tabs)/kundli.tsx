@@ -19,7 +19,7 @@ import { useHoroscope, useVedicExtras } from "@/hooks/useAstrology";
 import { useProfileBundle } from "@/hooks/useProfile";
 import { useTheme } from "@/theme/ThemeProvider";
 import { DISCLAIMER, HOUSE_THEMES, SIGNS } from "@/lib/constants";
-import { titleCase } from "@/lib/format";
+import { formatDashaBalance, titleCase } from "@/lib/format";
 import { spacing } from "@/theme/tokens";
 
 const SECTIONS = ["Chart", "Dashas", "Yogas", "Doshas", "Vargas"] as const;
@@ -177,7 +177,7 @@ export default function KundliScreen() {
                       {payload.dasha?.currentAntar ? ` / ${payload.dasha.currentAntar}` : ""}
                     </Text>
                     <Text variant="caption" tone="muted">
-                      Vimshottari dasha · balance at birth {payload.dasha?.balanceAtBirth ?? "—"}
+                      Vimshottari dasha · balance at birth {formatDashaBalance(payload.dasha?.balanceAtBirth)}
                     </Text>
                   </Card>
                   <Card>

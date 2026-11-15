@@ -26,18 +26,19 @@ The mobile client unwraps `data`, and throws a typed `ApiError` otherwise.
 
 ## 1. Authentication
 
-Better Auth handler: **all methods** `/auth/[...all]`. Mobile additionally requires the backend
-`bearer()` plugin (applied in this workspace).
+Better Auth handler: **all methods** `/api/auth/[...all]`. Mobile additionally requires the backend
+`bearer()` plugin (applied in this workspace). `EXPO_PUBLIC_API_URL` is the host only; the client
+appends `/api`.
 
 | Flow | Request | Notes |
 | --- | --- | --- |
-| Register | `POST /auth/sign-up/email` `{ name, email, password, phone?, displayName? }` | 8-char min password. Response sets session; `set-auth-token` header carries the token. |
-| Login | `POST /auth/sign-in/email` `{ email, password }` | Read `set-auth-token`. |
-| Logout | `POST /auth/sign-out` | Always clears local session even if this fails. |
-| Session | `GET /auth/me` | `{ authenticated, user{id,name,email,image,emailVerified,role,roles,isAdmin,phone}, session{expiresAt} }`; `401` when anonymous. |
-| Verify email OTP | `POST /auth/email-otp/send-verification-otp` `{ email, type:"email-verification" }` → `POST /auth/email-otp/verify-email` `{ email, otp }` | 6 digits, 10 min. |
-| Request reset OTP | `POST /auth/email-otp/request-password-reset` `{ email }` | Email OTP path (works natively). |
-| Reset with OTP | `POST /auth/email-otp/reset-password` `{ email, otp, password }` | |
+| Register | `POST /api/auth/sign-up/email` `{ name, email, password, phone?, displayName? }` | 8-char min password. Response sets session; `set-auth-token` header carries the token. |
+| Login | `POST /api/auth/sign-in/email` `{ email, password }` | Read `set-auth-token`. |
+| Logout | `POST /api/auth/sign-out` | Always clears local session even if this fails. |
+| Session | `GET /api/auth/me` | `{ authenticated, user{id,name,email,image,emailVerified,role,roles,isAdmin,phone}, session{expiresAt} }`; `401` when anonymous. |
+| Verify email OTP | `POST /api/auth/email-otp/send-verification-otp` `{ email, type:"email-verification" }` → `POST /api/auth/email-otp/verify-email` `{ email, otp }` | 6 digits, 10 min. |
+| Request reset OTP | `POST /api/auth/email-otp/request-password-reset` `{ email }` | Email OTP path (works natively). |
+| Reset with OTP | `POST /api/auth/email-otp/reset-password` `{ email, otp, password }` | |
 | Google | — | **Not enabled natively.** Web-only fallback; see architecture §10. |
 
 Auth header for every API call:
@@ -46,7 +47,7 @@ Auth header for every API call:
 Authorization: Bearer <token>
 ```
 
-`/auth/me` also works with cookie auth, so the web app is unaffected.
+`/api/auth/me` also works with cookie auth, so the web app is unaffected.
 
 ## 2. Profile & onboarding
 

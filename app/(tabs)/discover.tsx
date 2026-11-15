@@ -55,6 +55,7 @@ export default function DiscoverScreen() {
             onPress={() => setSheetOpen(true)}
             accessibilityRole="button"
             accessibilityLabel="Open filters"
+            hitSlop={8}
             style={{
               flexDirection: "row",
               alignItems: "center",

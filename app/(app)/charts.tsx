@@ -21,7 +21,7 @@ export default function ChartsScreen() {
   const [selected, setSelected] = useState<string>("d1North");
 
   return (
-    <Screen title="Charts" subtitle="Whole-sign and divisional charts">
+    <Screen title="Charts" subtitle="Whole-sign and divisional charts" showBack>
       {extras.isLoading ? (
         <LoadingState variant="detail" />
       ) : extras.isError ? (

@@ -53,6 +53,7 @@ export function Chip({ label, selected, onPress, size = "md", tone = "neutral" }
       accessibilityRole="button"
       accessibilityState={{ selected }}
       accessibilityLabel={label}
+      hitSlop={8}
       style={({ pressed }) => [style, pressed && { opacity: 0.75 }]}
     >
       {content}

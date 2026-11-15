@@ -16,7 +16,7 @@ export default function GocharScreen() {
   const gochar = useGochar();
 
   return (
-    <Screen title="Gochar" subtitle="Current planetary transits over your chart">
+    <Screen title="Gochar" subtitle="Current planetary transits over your chart" showBack>
       {gochar.isLoading ? (
         <LoadingState variant="detail" />
       ) : gochar.isError ? (

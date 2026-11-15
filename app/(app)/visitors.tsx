@@ -27,21 +27,25 @@ export default function VisitorsScreen() {
         <EmptyState title="No visitors yet" body="Keep your profile fresh to get noticed." />
       ) : (
         <View style={{ gap: spacing.md }}>
-          {items.map((item, index) => (
-            <Card
-              key={item.userId ?? index}
-              onPress={item.userId ? () => router.push(`/(app)/match/${item.userId}`) : undefined}
-              style={{ flexDirection: "row", alignItems: "center", gap: spacing.md }}
-            >
-              <Avatar uri={typeof item.photo === "string" ? item.photo : null} name={typeof item.name === "string" ? item.name : "Member"} size={44} ring />
-              <View style={{ flex: 1 }}>
-                <Text variant="body">{typeof item.name === "string" ? item.name : "Member"}</Text>
-                <Text variant="caption" tone="faint">
-                  {item.visitedAt ? formatDateTime(String(item.visitedAt)) : ""}
-                </Text>
-              </View>
-            </Card>
-          ))}
+          {items.map((item, index) => {
+            const userId = item.visitorUserId ?? item.userId;
+            const visitedAt = item.lastVisitedAt ?? item.visitedAt;
+            return (
+              <Card
+                key={userId ?? index}
+                onPress={userId ? () => router.push(`/(app)/match/${userId}`) : undefined}
+                style={{ flexDirection: "row", alignItems: "center", gap: spacing.md }}
+              >
+                <Avatar uri={typeof item.photo === "string" ? item.photo : null} name={typeof item.name === "string" ? item.name : "Member"} size={44} ring />
+                <View style={{ flex: 1 }}>
+                  <Text variant="body">{typeof item.name === "string" ? item.name : "Member"}</Text>
+                  <Text variant="caption" tone="faint">
+                    {visitedAt ? formatDateTime(String(visitedAt)) : ""}
+                  </Text>
+                </View>
+              </Card>
+            );
+          })}
         </View>
       )}
     </Screen>

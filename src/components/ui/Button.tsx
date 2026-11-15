@@ -27,6 +27,7 @@ type Props = {
   icon?: React.ReactNode;
   haptics?: boolean;
   accessibilityHint?: string;
+  textColor?: string;
   style?: ViewStyle;
 };
 
@@ -41,6 +42,7 @@ export function Button({
   icon,
   haptics = true,
   accessibilityHint,
+  textColor,
   style,
 }: Props) {
   const { palette } = useTheme();
@@ -70,7 +72,7 @@ export function Button({
             variant={textSize}
             weight="semibold"
             style={[
-              { color: textColor(variant, palette) },
+              { color: textColor ?? textColorFor(variant, palette) },
               icon ? { marginLeft: spacing.sm } : null,
             ]}
           >
@@ -139,13 +141,13 @@ function borderColor(variant: ButtonVariant, palette: ReturnType<typeof useTheme
   return "transparent";
 }
 
-function textColor(variant: ButtonVariant, palette: ReturnType<typeof useTheme>["palette"]) {
+function textColorFor(variant: ButtonVariant, palette: ReturnType<typeof useTheme>["palette"]) {
   switch (variant) {
     case "primary":
       return palette.inverse;
     case "danger":
     case "gold":
-      return variant === "gold" ? "#14110E" : palette.inverse;
+      return palette.inverse;
     case "secondary":
     case "outline":
       return palette.text;

@@ -16,7 +16,7 @@ export default function MarriageTimingScreen() {
   const query = useMarriageTiming(true);
 
   return (
-    <Screen title="Marriage timing" subtitle="Windows indicated by your chart and dashas">
+    <Screen title="Marriage timing" subtitle="Windows indicated by your chart and dashas" showBack>
       {query.isLoading ? (
         <LoadingState variant="detail" />
       ) : query.isError ? (

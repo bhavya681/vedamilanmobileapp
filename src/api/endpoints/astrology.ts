@@ -1,3 +1,5 @@
+import { format } from "date-fns";
+
 import { request } from "@/api/client/http";
 import type {
   Celebration,
@@ -9,8 +11,17 @@ import type {
 } from "@/api/types/models";
 
 export type MuhurtaWindow = {
-  label?: string;
+  date?: string;
   activity?: string;
+  rating?: "excellent" | "good" | "moderate" | "avoid";
+  startTime?: string;
+  endTime?: string;
+  startTs?: number;
+  endTs?: number;
+  score?: number;
+  reasons?: string[];
+  cautions?: string[];
+  label?: string;
   start?: string;
   end?: string;
   quality?: string;
@@ -60,7 +71,9 @@ export const astrologyApi = {
   getVedicExtras: () => request<VedicExtras>("/horoscope/vedic-extras"),
 
   getPanchanga: (query?: { date?: string; latitude?: number; longitude?: number; timezone?: string }) =>
-    request<PanchangaResponse>("/panchanga", { query }),
+    request<PanchangaResponse>("/panchanga", {
+      query: { ...query, date: query?.date ?? format(new Date(), "yyyy-MM-dd") },
+    }),
 
   getMuhurta: (query: {
     date: string;
@@ -70,7 +83,10 @@ export const astrologyApi = {
     timezone?: string;
   }) => request<MuhurtaResponse>("/muhurta", { query }),
 
-  getGochar: (date?: string) => request<GocharResponse>("/gochar", { query: { date } }),
+  getGochar: (date?: string) =>
+    request<GocharResponse>("/gochar", {
+      query: { date: date ?? new Date().toISOString() },
+    }),
 
   getNumerology: () => request<NumerologyResponse>("/numerology"),
 

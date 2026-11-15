@@ -5,6 +5,12 @@ import { astrologyApi } from "@/api/endpoints/astrology";
 import { queryKeys } from "@/api/queryKeys";
 import type { BirthDetails } from "@/api/types/models";
 
+const DEFAULT_POINT = {
+  latitude: 28.6139,
+  longitude: 77.209,
+  timezone: "Asia/Kolkata",
+} as const;
+
 function queryPoint(birth: BirthDetails | null | undefined) {
   if (!birth) return undefined;
   return {
@@ -60,20 +66,23 @@ export function useVedicExtras(enabled = true) {
 }
 
 export function usePanchanga(birth?: BirthDetails | null, date?: string) {
-  const point = queryPoint(birth);
+  const ready = birth !== undefined;
+  const point = queryPoint(birth) ?? DEFAULT_POINT;
   return useQuery({
-    queryKey: queryKeys.panchanga(date),
+    queryKey: [...queryKeys.panchanga(date), point] as const,
     queryFn: () => astrologyApi.getPanchanga({ date, ...point }),
+    enabled: ready,
     staleTime: 10 * 60_000,
   });
 }
 
 export function useMuhurta(activity: string, date: string, birth?: BirthDetails | null) {
-  const point = queryPoint(birth);
+  const ready = birth !== undefined;
+  const point = queryPoint(birth) ?? DEFAULT_POINT;
   return useQuery({
-    queryKey: ["muhurta", activity, date, point ?? null] as const,
+    queryKey: ["muhurta", activity, date, point] as const,
     queryFn: () => astrologyApi.getMuhurta({ activity, date, ...point }),
-    enabled: Boolean(activity && date),
+    enabled: Boolean(activity && date && ready),
   });
 }
 

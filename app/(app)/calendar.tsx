@@ -10,7 +10,7 @@ export default function CalendarScreen() {
   const query = useAstrologyModule("calendar", true);
 
   return (
-    <Screen title="Life calendar" subtitle="Significant periods ahead">
+    <Screen title="Life calendar" subtitle="Significant periods ahead" showBack>
       {query.isLoading ? (
         <LoadingState variant="detail" />
       ) : query.isError ? (

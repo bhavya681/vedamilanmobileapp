@@ -13,10 +13,12 @@ import { Text } from "@/components/ui/Text";
 import { ScoreRing } from "@/components/ui/ScoreRing";
 import { DISCLAIMER } from "@/lib/constants";
 import { titleCase } from "@/lib/format";
+import { useTheme } from "@/theme/ThemeProvider";
 import { spacing } from "@/theme/tokens";
 import type { CompatibilityReport } from "@/api/types/models";
 
 function ReportView({ report }: { report: CompatibilityReport }) {
+  const { palette } = useTheme();
   const score = Math.round(report.overallScore ?? report.percentage ?? 0);
   return (
     <View style={{ gap: spacing.lg }}>
@@ -46,8 +48,8 @@ function ReportView({ report }: { report: CompatibilityReport }) {
                     {item.score}/{item.max}
                   </Text>
                 </View>
-                <View style={{ height: 6, borderRadius: 3, backgroundColor: "rgba(120,120,120,0.2)" }}>
-                  <View style={{ height: 6, width: `${pct}%`, borderRadius: 3, backgroundColor: "#D4AF37" }} />
+                <View style={{ height: 6, borderRadius: 3, backgroundColor: palette.border }}>
+                  <View style={{ height: 6, width: `${pct}%`, borderRadius: 3, backgroundColor: palette.gold }} />
                 </View>
                 {item.note ? (
                   <Text variant="micro" tone="faint">

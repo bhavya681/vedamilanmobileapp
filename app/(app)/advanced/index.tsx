@@ -21,7 +21,7 @@ const MODULES = [
 export default function AdvancedScreen() {
   const router = useRouter();
   return (
-    <Screen title="Advanced reports" subtitle="Deeper Vedic analysis, generated on our server">
+    <Screen title="Advanced reports" subtitle="Deeper Vedic analysis, generated on our server" showBack>
       <View style={{ gap: spacing.md }}>
         {MODULES.map((module) => (
           <Card key={module.key} onPress={() => router.push(`/(app)/advanced/${module.key}` as never)} style={{ gap: 3 }}>
