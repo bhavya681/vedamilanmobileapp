@@ -25,6 +25,12 @@ import { spacing } from "@/theme/tokens";
 const SECTIONS = ["Chart", "Dashas", "Yogas", "Doshas", "Vargas"] as const;
 type Section = (typeof SECTIONS)[number];
 
+function lordLabel(lord: { lord?: string; planet?: string } | string | null | undefined) {
+  if (!lord) return "—";
+  if (typeof lord === "string") return lord;
+  return lord.lord ?? lord.planet ?? "—";
+}
+
 export default function KundliScreen() {
   const router = useRouter();
   const { palette } = useTheme();
@@ -173,8 +179,8 @@ export default function KundliScreen() {
                       CURRENT PERIOD
                     </Text>
                     <Text variant="heading">
-                      {payload.dasha?.currentMaha ?? "—"}
-                      {payload.dasha?.currentAntar ? ` / ${payload.dasha.currentAntar}` : ""}
+                      {lordLabel(payload.dasha?.currentMaha)}
+                      {lordLabel(payload.dasha?.currentAntar) ? ` / ${lordLabel(payload.dasha.currentAntar)}` : ""}
                     </Text>
                     <Text variant="caption" tone="muted">
                       Vimshottari dasha · balance at birth {formatDashaBalance(payload.dasha?.balanceAtBirth)}
