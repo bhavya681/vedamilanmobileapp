@@ -220,8 +220,10 @@ export default function KundliScreen() {
                     <LoadingState variant="list" />
                   ) : extras.isError ? (
                     <ErrorState error={extras.error} onRetry={() => extras.refetch()} />
+                  ) : extras.data ? (
+                    <DoshaList doshas={extras.data.doshas ?? []} />
                   ) : (
-                    <DoshaList doshas={extras.data?.doshas ?? []} />
+                    <EmptyState title="No significant doshas found" body="Your chart does not show major dosha patterns." />
                   )}
                 </Card>
               ) : null}

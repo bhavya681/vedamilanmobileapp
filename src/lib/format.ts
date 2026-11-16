@@ -25,8 +25,10 @@ export function timeAgo(value: string | number | Date | null | undefined): strin
   }
 }
 
-export function titleCase(value: string): string {
-  return value
+export function titleCase(value: string | number | null | undefined): string {
+  if (value == null) return "";
+  const str = String(value);
+  return str
     .replace(/[_-]+/g, " ")
     .replace(/\b\w/g, (c) => c.toUpperCase())
     .trim();
