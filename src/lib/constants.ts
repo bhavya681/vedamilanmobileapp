@@ -184,6 +184,26 @@ export const AI_AGENTS = [
     blurb: "Ask anything about your chart, timing, or remedies.",
   },
   {
+    key: "ASTROLOGER_GURU",
+    title: "Astrologer Guru",
+    blurb: "Deep Vedic guidance on life, karma, and your birth chart.",
+  },
+  {
+    key: "HOROSCOPE",
+    title: "Horoscope Guide",
+    blurb: "Understand your lagna, planets, dashas, and daily influences.",
+  },
+  {
+    key: "COMPATIBILITY",
+    title: "Compatibility Guide",
+    blurb: "Explore guna milan, strengths, and relationship alignment.",
+  },
+  {
+    key: "MARRIAGE_TIMING",
+    title: "Marriage Timing",
+    blurb: "Discuss marriage windows and timing factors in your chart.",
+  },
+  {
     key: "MARRIAGE_GURU",
     title: "Marriage Guru",
     blurb: "Readiness, partner fit, and marriage timing guidance.",
@@ -194,9 +214,34 @@ export const AI_AGENTS = [
     blurb: "Practical guidance for the connection you are building.",
   },
   {
+    key: "PROFILE_ANALYSIS",
+    title: "Profile Analysis",
+    blurb: "Get AI feedback on your profile and how to present yourself.",
+  },
+  {
+    key: "SEARCH",
+    title: "Match Search Guide",
+    blurb: "Refine what to look for in matches based on your preferences.",
+  },
+  {
+    key: "RECOMMENDATION",
+    title: "Recommendations",
+    blurb: "Understand why certain matches are suggested for you.",
+  },
+  {
+    key: "REPORT",
+    title: "Report Guide",
+    blurb: "Walk through your astrology and compatibility reports.",
+  },
+  {
     key: "WISDOM_GUIDE",
     title: "Wisdom Guide",
     blurb: "Reflective guidance drawn from Vedic wisdom.",
+  },
+  {
+    key: "SUPPORT",
+    title: "Support Assistant",
+    blurb: "Help with using VedaMilan features and your account.",
   },
 ] as const;
 

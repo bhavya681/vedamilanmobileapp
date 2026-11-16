@@ -15,6 +15,29 @@ function insightText(insight?: string | YogaInsightDetail) {
   return insight.meaning ?? insight.watchFor ?? insight.activationNow ?? insight.engineNote ?? null;
 }
 
+function doshaInsightText(insight: DoshaItem["insight"]): string | null {
+  if (!insight) return null;
+  if (typeof insight === "string") return insight;
+  if (typeof insight === "object") {
+    const record = insight as YogaInsightDetail & {
+      statusLabel?: string;
+      meaning?: string;
+      watchFor?: string;
+      activationNow?: string;
+      engineNote?: string;
+    };
+    return (
+      record.meaning ??
+      record.watchFor ??
+      record.activationNow ??
+      record.statusLabel ??
+      record.engineNote ??
+      null
+    );
+  }
+  return null;
+}
+
 export function YogaList({ yogas, emptyLabel }: { yogas: YogaItem[]; emptyLabel: string }) {
   if (!yogas.length) {
     return <EmptyState title={emptyLabel} body="This placement is not prominent in your chart." />;
@@ -64,9 +87,9 @@ export function DoshaList({ doshas }: { doshas: DoshaItem[] }) {
               {dosha.notes}
             </Text>
           ) : null}
-          {dosha.insight ? (
+          {doshaInsightText(dosha.insight) ? (
             <Text variant="caption" tone="gold">
-              {dosha.insight}
+              {doshaInsightText(dosha.insight)}
             </Text>
           ) : null}
         </View>

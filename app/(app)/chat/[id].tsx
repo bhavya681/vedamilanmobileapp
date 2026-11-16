@@ -61,11 +61,18 @@ export default function ChatScreen() {
   };
 
   return (
-    <Screen title={typeof name === "string" && name ? name : "Chat"} showBack>
+    <Screen
+      title={typeof name === "string" && name ? name : "Chat"}
+      subtitle="Private conversation"
+      showBack
+      scroll={false}
+      padded={false}
+      edges={["top", "left", "right", "bottom"]}
+    >
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
-        keyboardVerticalOffset={90}
+        keyboardVerticalOffset={0}
       >
         {query.isLoading ? (
           <LoadingState variant="detail" />
@@ -75,7 +82,7 @@ export default function ChatScreen() {
           <ScrollView
             ref={scrollRef}
             style={{ flex: 1 }}
-            contentContainerStyle={{ paddingVertical: spacing.md }}
+            contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingVertical: spacing.md }}
             onContentSizeChange={() => scrollRef.current?.scrollToEnd({ animated: false })}
           >
             {bubbles.length === 0 ? (

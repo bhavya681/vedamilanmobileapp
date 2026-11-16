@@ -12,7 +12,7 @@ import {
 import { SafeAreaView, type Edge } from "react-native-safe-area-context";
 
 import { useTheme } from "@/theme/ThemeProvider";
-import { spacing } from "@/theme/tokens";
+import { radii, spacing } from "@/theme/tokens";
 import { Text } from "./Text";
 
 type Props = {
@@ -21,6 +21,7 @@ type Props = {
   padded?: boolean;
   title?: string;
   subtitle?: string;
+  eyebrow?: string;
   showBack?: boolean;
   onBack?: () => void;
   right?: React.ReactNode;
@@ -38,6 +39,7 @@ export function Screen({
   padded = true,
   title,
   subtitle,
+  eyebrow,
   showBack = false,
   onBack,
   right,
@@ -50,13 +52,14 @@ export function Screen({
 }: Props) {
   const { palette } = useTheme();
   const router = useRouter();
+  const hasHeader = Boolean(title || showBack || right || eyebrow);
 
   const body = scroll ? (
     <ScrollView
       keyboardShouldPersistTaps="handled"
       showsVerticalScrollIndicator={false}
       contentContainerStyle={[
-        { padding: padded ? spacing.xl : 0, paddingBottom: spacing.huge },
+        { padding: padded ? spacing.xl : 0, paddingBottom: spacing.giant },
         contentContainerStyle,
       ]}
       refreshControl={
@@ -81,32 +84,58 @@ export function Screen({
       edges={edges}
       style={{ flex: 1, backgroundColor: background ?? palette.canvas }}
     >
-      {title || showBack || right ? (
-        <View style={[styles.header, { borderBottomColor: palette.border }]}>
+      {hasHeader ? (
+        <View
+          style={[
+            styles.header,
+            {
+              backgroundColor: palette.canvas,
+              borderBottomColor: palette.border,
+            },
+          ]}
+        >
           {showBack ? (
             <Pressable
-              onPress={onBack ?? (() => router.back())}
+              onPress={
+                onBack ??
+                (() => {
+                  if (router.canGoBack()) router.back();
+                  else router.replace("/(tabs)");
+                })
+              }
               accessibilityRole="button"
               accessibilityLabel="Go back"
-              hitSlop={12}
-              style={styles.back}
+              hitSlop={10}
+              style={({ pressed }) => [
+                styles.back,
+                {
+                  backgroundColor: palette.raised,
+                  borderColor: palette.border,
+                  opacity: pressed ? 0.7 : 1,
+                },
+              ]}
             >
-              <ChevronLeft size={24} color={palette.text} />
+              <ChevronLeft size={21} color={palette.text} strokeWidth={2} />
             </Pressable>
           ) : null}
-          <View style={{ flex: 1 }}>
+          <View style={{ flex: 1, gap: 1 }}>
+            {eyebrow ? (
+              <Text variant="micro" tone="gold" style={{ letterSpacing: 1.8 }}>
+                {eyebrow.toUpperCase()}
+              </Text>
+            ) : null}
             {title ? (
-              <Text variant="titleLg" numberOfLines={1}>
+              <Text variant="title" numberOfLines={1} weight="semibold">
                 {title}
               </Text>
             ) : null}
             {subtitle ? (
-              <Text variant="caption" tone="muted" numberOfLines={2} style={{ marginTop: 2 }}>
+              <Text variant="caption" tone="muted" numberOfLines={2} style={{ marginTop: 1 }}>
                 {subtitle}
               </Text>
             ) : null}
           </View>
-          {right ? <View style={{ marginLeft: spacing.md }}>{right}</View> : null}
+          {right ? <View style={{ marginLeft: spacing.sm }}>{right}</View> : null}
         </View>
       ) : null}
       {body}
@@ -120,13 +149,16 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.md,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    gap: spacing.sm,
+    gap: spacing.md,
   },
   back: {
-    width: 36,
-    height: 36,
+    width: 40,
+    height: 40,
+    borderRadius: radii.pill,
+    borderWidth: StyleSheet.hairlineWidth,
     alignItems: "center",
     justifyContent: "center",
   },

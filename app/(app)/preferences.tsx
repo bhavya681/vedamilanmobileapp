@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Chip } from "@/components/ui/Chip";
 import { Input } from "@/components/ui/Input";
-import { LoadingState } from "@/components/ui/ScreenState";
+import { ErrorState, LoadingState } from "@/components/ui/ScreenState";
 import { Screen } from "@/components/ui/Screen";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Text } from "@/components/ui/Text";
@@ -35,11 +35,36 @@ function fromCsv(value: string) {
 }
 
 export default function PreferencesScreen() {
+  const query = usePreferences();
+
+  if (query.isLoading) {
+    return (
+      <Screen title="Partner preferences" showBack>
+        <LoadingState variant="detail" />
+      </Screen>
+    );
+  }
+
+  if (query.isError) {
+    return (
+      <Screen title="Partner preferences" showBack>
+        <ErrorState error={query.error} onRetry={() => query.refetch()} />
+      </Screen>
+    );
+  }
+
+  return (
+    <PreferencesForm
+      key={JSON.stringify(query.data ?? {})}
+      prefs={query.data ?? undefined}
+    />
+  );
+}
+
+function PreferencesForm({ prefs }: { prefs?: Preferences }) {
   const router = useRouter();
   const toast = useToast();
-  const query = usePreferences();
   const save = useSavePreferences();
-  const prefs = query.data;
 
   const [ageMin, setAgeMin] = useState(prefs?.ageMin?.toString() ?? "");
   const [ageMax, setAgeMax] = useState(prefs?.ageMax?.toString() ?? "");
@@ -55,14 +80,6 @@ export default function PreferencesScreen() {
   const [maxDistance, setMaxDistance] = useState(prefs?.maxDistanceKm?.toString() ?? "");
   const [notes, setNotes] = useState(prefs?.notes ?? "");
   const [error, setError] = useState<string | null>(null);
-
-  if (query.isLoading) {
-    return (
-      <Screen title="Partner preferences" showBack>
-        <LoadingState variant="detail" />
-      </Screen>
-    );
-  }
 
   const submit = async () => {
     setError(null);

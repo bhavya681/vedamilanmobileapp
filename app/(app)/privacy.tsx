@@ -13,7 +13,7 @@ import { useProfileBundle, useUpdateProfile } from "@/hooks/useProfile";
 import { useToast } from "@/components/feedback/ToastProvider";
 import { useTheme } from "@/theme/ThemeProvider";
 import { spacing } from "@/theme/tokens";
-import type { PrivacySettings } from "@/api/types/models";
+import type { PrivacySettings, Profile } from "@/api/types/models";
 
 const TOGGLES: Array<{ key: keyof PrivacySettings; label: string; hint: string }> = [
   { key: "showAge", label: "Show my age", hint: "Display your age on your profile" },
@@ -26,14 +26,7 @@ const TOGGLES: Array<{ key: keyof PrivacySettings; label: string; hint: string }
 ];
 
 export default function PrivacyScreen() {
-  const { palette } = useTheme();
-  const router = useRouter();
-  const toast = useToast();
   const bundle = useProfileBundle();
-  const save = useUpdateProfile();
-  const profile = bundle.data?.profile;
-  const [privacy, setPrivacy] = useState<PrivacySettings>(profile?.privacy ?? {});
-  const [visibility, setVisibility] = useState(profile?.visibility ?? "MEMBERS");
 
   if (bundle.isLoading) {
     return (
@@ -42,6 +35,19 @@ export default function PrivacyScreen() {
       </Screen>
     );
   }
+
+  return <PrivacyForm key={bundle.data?.profile.userId ?? "privacy"} profile={bundle.data?.profile} />;
+}
+
+function PrivacyForm({ profile }: { profile?: Profile }) {
+  const { palette } = useTheme();
+  const router = useRouter();
+  const toast = useToast();
+  const save = useUpdateProfile();
+  const [privacy, setPrivacy] = useState<PrivacySettings>(profile?.privacy ?? {});
+  const [visibility, setVisibility] = useState<NonNullable<Profile["visibility"]>>(
+    profile?.visibility ?? "MEMBERS",
+  );
 
   const toggle = (key: keyof PrivacySettings) =>
     setPrivacy((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -71,7 +77,7 @@ export default function PrivacyScreen() {
                 key={option.value}
                 label={option.label}
                 selected={visibility === option.value}
-                onPress={() => setVisibility(option.value as typeof visibility)}
+                onPress={() => setVisibility(option.value as NonNullable<Profile["visibility"]>)}
               />
             ))}
           </View>

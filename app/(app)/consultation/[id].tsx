@@ -61,14 +61,21 @@ export default function ConsultationChatScreen() {
   };
 
   return (
-    <Screen title={astrologer?.name ?? "Consultation"} subtitle={astrologer?.title} showBack>
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={90}>
+    <Screen
+      title={astrologer?.name ?? "Consultation"}
+      subtitle={astrologer?.title ?? "Astrology guidance"}
+      showBack
+      scroll={false}
+      padded={false}
+      edges={["top", "left", "right", "bottom"]}
+    >
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={0}>
         {info.isLoading ? (
           <LoadingState variant="detail" />
         ) : info.isError ? (
           <ErrorState error={info.error} onRetry={() => info.refetch()} />
         ) : (
-          <>
+          <View style={{ flex: 1, paddingHorizontal: spacing.lg, gap: spacing.sm }}>
             <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingVertical: spacing.md }}>
               {messages.length === 0 ? (
                 <View style={{ paddingVertical: spacing.xxl, gap: spacing.sm, alignItems: "center" }}>
@@ -82,7 +89,7 @@ export default function ConsultationChatScreen() {
             </ScrollView>
             <InlineNotice body={info.data?.disclaimer ?? "Guidance only. For urgent matters, contact local support services."} />
             <ChatComposer onSend={send} sending={sending} placeholder={`Ask ${astrologer?.name ?? "the astrologer"}…`} />
-          </>
+          </View>
         )}
       </KeyboardAvoidingView>
     </Screen>

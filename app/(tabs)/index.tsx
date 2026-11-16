@@ -1,4 +1,5 @@
 import { useRouter } from "expo-router";
+import { LinearGradient } from "expo-linear-gradient";
 import {
   CalendarDays,
   Calculator,
@@ -53,6 +54,9 @@ function greeting(): string {
   return "Good evening";
 }
 
+const ON_DARK = "#F7F3E9";
+const GOLD_ON_DARK = "#E8CE8B";
+
 export default function HomeScreen() {
   const router = useRouter();
   const { palette, scheme } = useTheme();
@@ -80,23 +84,22 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: palette.canvas }} edges={["top", "left", "right"]}>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: spacing.giant }}>
-        <View style={styles.header}>
-          <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.md, flex: 1 }}>
-            <Avatar uri={photo} name={user?.user.name ?? profile?.name} size={44} ring />
-            <View style={{ flex: 1 }}>
-              <Text variant="caption" tone="muted" style={{ letterSpacing: 0.5 }}>
-                {greeting()}, {user?.user.name ?? profile?.name?.split(" ")[0] ?? "there"}
-              </Text>
-              <Text variant="titleLg" numberOfLines={1} weight="semibold">
-                {user?.user.name ?? profile?.name ?? "Seeker"}
-              </Text>
-            </View>
+      <View style={styles.header}>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.md, flex: 1 }}>
+          <Avatar uri={photo} name={user?.user.name ?? profile?.name} size={44} ring />
+          <View style={{ flex: 1 }}>
+            <Text variant="caption" tone="muted" style={{ letterSpacing: 0.5 }}>
+              {greeting()}
+            </Text>
+            <Text variant="titleLg" numberOfLines={1} weight="semibold">
+              {profile?.name?.split(" ")[0] ?? user?.user.name?.split(" ")[0] ?? "Seeker"}
+            </Text>
           </View>
-          <NotificationBell />
         </View>
-
-        <View style={{ paddingHorizontal: spacing.xl, gap: spacing.xl }}>
+        <NotificationBell />
+      </View>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: spacing.giant }}>
+        <View style={{ paddingHorizontal: spacing.xl, gap: spacing.xl, paddingTop: spacing.xs }}>
 
           {isBirthIncomplete ? (
             <Card padded style={{ gap: spacing.md, backgroundColor: `${palette.goldSoft}12`, borderColor: `${palette.goldSoft}40` }}>
@@ -113,18 +116,30 @@ export default function HomeScreen() {
             </Card>
           ) : null}
 
-          <Card tone="sunken" padded={false} style={styles.hero}>
-            <View style={{ padding: spacing.xl }}>
+          <Card
+            padded={false}
+            style={[styles.hero, { borderColor: `${palette.goldSoft}3D` }]}
+          >
+            <LinearGradient
+              colors={palette.primaryGradient}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              pointerEvents="none"
+              style={StyleSheet.absoluteFill}
+            />
+            <View style={{ padding: spacing.xl, position: "relative" }}>
               <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" }}>
                 <View>
-                  <Text variant="micro" tone="gold" style={{ letterSpacing: 1.2 }}>
-                    Your Vedic snapshot
+                  <Text variant="micro" style={{ color: GOLD_ON_DARK, letterSpacing: 1.6 }}>
+                    YOUR VEDIC SNAPSHOT
                   </Text>
-                  <Text variant="display" numberOfLines={1} weight="semibold" style={{ marginTop: 4 }}>
-                    {horoscope ? horoscope.lagnaSign : kundli.isLoading ? "—" : "—"}
+                  <Text variant="display" numberOfLines={1} weight="semibold" style={{ color: ON_DARK, marginTop: 4 }}>
+                    {horoscope ? horoscope.lagnaSign : "—"}
                   </Text>
-                  <Text variant="caption" tone="muted" style={{ marginTop: 2 }}>
-                    {horoscope ? `Lagna · ${horoscope.lagnaNakshatra ?? "Vedic sidereal"}` : "Add your birth details to cast your chart."}
+                  <Text variant="caption" style={{ color: "rgba(247,243,233,0.72)", marginTop: 2 }}>
+                    {horoscope
+                      ? `Lagna · ${horoscope.lagnaNakshatra ?? "Vedic sidereal"}`
+                      : "Add your birth details to cast your chart."}
                   </Text>
                 </View>
                 {horoscope?.manglikStatus ? (
@@ -138,14 +153,14 @@ export default function HomeScreen() {
 
               {kundli.isLoading ? (
                 <View style={{ marginTop: spacing.lg, alignItems: "center" }}>
-                  <ActivityIndicator color={palette.gold} style={{ marginTop: spacing.sm }} />
-                  <Text variant="small" tone="muted" style={{ marginTop: spacing.sm }}>
+                  <ActivityIndicator color={GOLD_ON_DARK} style={{ marginTop: spacing.sm }} />
+                  <Text variant="small" style={{ color: "rgba(247,243,233,0.78)", marginTop: spacing.sm }}>
                     Calculating planetary positions…
                   </Text>
                 </View>
               ) : kundli.error && !horoscope ? (
                 <View style={{ marginTop: spacing.md, alignItems: "center" }}>
-                  <Text variant="small" tone="ruby" style={{ textAlign: "center" }}>
+                  <Text variant="small" style={{ color: "#FFD8D4", textAlign: "center" }}>
                     We could not load your chart right now.
                   </Text>
                   <Button
@@ -171,16 +186,17 @@ export default function HomeScreen() {
                       onPress={() => router.push("/(tabs)/kundli")}
                       style={{ flex: 1 }}
                     />
-                <Button
-                  label="Ask the Guide"
-                  variant="ghost"
-                  size="sm"
-                  onPress={() => router.push("/chats")}
-                  style={{ flex: 1 }}
-                />
+                    <Button
+                      label="Ask the Guide"
+                      variant="ghost"
+                      size="sm"
+                      textColor={GOLD_ON_DARK}
+                      onPress={() => router.push("/(tabs)/ai")}
+                      style={{ flex: 1 }}
+                    />
                   </View>
                   {meta?.ayanamsha ? (
-                    <Text variant="micro" tone="faint" style={{ marginTop: spacing.md, textAlign: "center" }}>
+                    <Text variant="micro" style={{ color: "rgba(247,243,233,0.58)", marginTop: spacing.md, textAlign: "center" }}>
                       {String(meta.ayanamsha)} ayanamsha · sidereal
                     </Text>
                   ) : null}
@@ -208,16 +224,16 @@ export default function HomeScreen() {
               />
               <QuickTile
                 icon={Sparkles}
-                label="AI Guide"
-                value="Ask"
-                subtitle="Vedic insights"
-                onPress={() => router.push("/chats")}
+                  label="AI Guide"
+                  value="Ask"
+                  subtitle="Vedic insights"
+                  onPress={() => router.push("/(tabs)/ai")}
               />
               <QuickTile
                 icon={Bell}
-                label="Notifications"
-                value="0 new"
-                subtitle="Updates"
+                  label="Notifications"
+                  value="Open"
+                  subtitle="Updates"
                 onPress={() => router.push("/(app)/notifications")}
               />
             </View>
@@ -347,13 +363,20 @@ export default function HomeScreen() {
             </View>
           </View>
 
-          <Card padded style={{ gap: spacing.sm }}>
+          <Card
+            tone="gold"
+            onPress={() =>
+              router.push({ pathname: "/(tabs)/ai", params: { agent: "MARRIAGE_GURU" } })
+            }
+            accessibilityLabel="Open Marriage Guru"
+            style={{ gap: spacing.sm }}
+          >
             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
               <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
                 <Sparkles size={16} color={palette.gold} />
                 <Text variant="label">Marriage Guru</Text>
               </View>
-              <ChevronRight size={16} color={palette.textFaint} />
+              <ChevronRight size={16} color={palette.gold} />
             </View>
             <Text variant="small" tone="muted">
               Understand your readiness, timing windows and the patterns your chart repeats in relationships.
@@ -372,10 +395,10 @@ export default function HomeScreen() {
 function MiniStat({ label, value }: { label: string; value: string }) {
   return (
     <View style={{ flex: 1 }}>
-      <Text variant="micro" tone="faint" style={{ textAlign: "center" }}>
+      <Text variant="micro" style={{ color: GOLD_ON_DARK, textAlign: "center" }}>
         {label.toUpperCase()}
       </Text>
-      <Text variant="title" numberOfLines={1} style={{ textAlign: "center" }}>
+      <Text variant="title" numberOfLines={1} style={{ color: ON_DARK, textAlign: "center" }}>
         {value}
       </Text>
     </View>
@@ -395,22 +418,37 @@ function QuickTile({
   subtitle: string;
   onPress: () => void;
 }) {
+  const { palette } = useTheme();
   return (
     <Pressable
       onPress={onPress}
       accessibilityRole="button"
       accessibilityLabel={label}
-      style={styles.quickTile}
+      style={[styles.quickTile, { backgroundColor: palette.raised, borderColor: palette.border }]}
       hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
     >
-      <View style={{ width: 40, height: 40, borderRadius: radii.md, backgroundColor: "#14110E12", alignItems: "center", justifyContent: "center" }}>
-        <Icon size={18} color="#C89B3C" />
+      <View
+        style={{
+          width: 40,
+          height: 40,
+          borderRadius: radii.md,
+          backgroundColor: `${palette.goldSoft}18`,
+          borderWidth: 1,
+          borderColor: `${palette.goldSoft}33`,
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Icon size={18} color={palette.gold} />
       </View>
       <Text variant="small" weight="semibold" numberOfLines={1} style={{ marginTop: spacing.xs }}>
         {label}
       </Text>
-      <Text variant="micro" tone="muted" numberOfLines={1} style={{ marginTop: spacing.xxs }}>
+      <Text variant="micro" tone="gold" numberOfLines={1} style={{ marginTop: spacing.xxs }}>
         {value}
+      </Text>
+      <Text variant="micro" tone="faint" numberOfLines={1}>
+        {subtitle}
       </Text>
     </Pressable>
   );
@@ -439,10 +477,9 @@ const styles = StyleSheet.create({
     flex: 1,
     minWidth: "22%",
     padding: spacing.md,
-    gap: spacing.sm,
+    gap: 2,
     borderRadius: radii.xl,
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: "#14110E10",
     alignItems: "center",
   },
 });

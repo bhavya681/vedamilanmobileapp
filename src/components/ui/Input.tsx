@@ -51,7 +51,7 @@ export const Input = forwardRef<React.ComponentRef<typeof TextInput>, Props>(fun
           {
             backgroundColor: palette.raised,
             borderColor: error ? palette.ruby : focused ? palette.gold : palette.border,
-            borderWidth: focused || error ? 1.5 : StyleSheet.hairlineWidth,
+            borderWidth: focused || error ? 1.5 : 1,
           },
         ]}
       >
@@ -76,7 +76,7 @@ export const Input = forwardRef<React.ComponentRef<typeof TextInput>, Props>(fun
               fontFamily: fontFamily.body,
               fontSize: fontSize.bodyLg,
               paddingVertical: spacing.md,
-              minHeight: 48,
+              minHeight: 52,
             },
             style,
           ]}

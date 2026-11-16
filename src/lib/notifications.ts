@@ -27,7 +27,7 @@ export function targetFromNotificationData(data: NotificationData | undefined): 
   if (type.includes("MESSAGE") || type === "CHAT") {
     const chatId = str(data.chatId);
     if (chatId) return { path: "/(app)/chat/[id]", params: { id: chatId } };
-    return { path: "/(app)/chats" };
+    return { path: "/(tabs)/chats" };
   }
   if (type.includes("VISITOR") || type === "PROFILE_VIEW") return { path: "/(app)/visitors" };
   if (type.includes("LIKE") || type.includes("INTEREST")) return { path: "/(app)/likes" };

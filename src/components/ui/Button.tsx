@@ -1,4 +1,5 @@
 import * as Haptics from "expo-haptics";
+import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import {
   ActivityIndicator,
@@ -7,7 +8,6 @@ import {
   View,
   type ViewStyle,
 } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 
 import { useTheme } from "@/theme/ThemeProvider";
 import { minTouchTarget, radii, spacing } from "@/theme/tokens";
@@ -48,7 +48,7 @@ export function Button({
   const { palette } = useTheme();
   const isDisabled = disabled || loading;
 
-  const height = size === "sm" ? 38 : size === "lg" ? 54 : 48;
+  const height = size === "sm" ? 40 : size === "lg" ? 54 : 48;
   const paddingH = size === "sm" ? spacing.md : spacing.xl;
   const textSize = size === "sm" ? "small" : "bodyLg";
 
@@ -61,10 +61,7 @@ export function Button({
   const content = (
     <View style={[styles.inner, { paddingHorizontal: paddingH, height }]}>
       {loading ? (
-        <ActivityIndicator
-          size="small"
-          color={variant === "primary" || variant === "gold" ? palette.onAccent : palette.text}
-        />
+        <ActivityIndicator size="small" color={textColorFor(variant, palette)} />
       ) : (
         <>
           {icon}
@@ -83,7 +80,12 @@ export function Button({
     </View>
   );
 
-  const bg = backgroundColor(variant, palette);
+  const gradient =
+    variant === "primary"
+      ? palette.primaryGradient
+      : variant === "gold"
+        ? palette.goldGradient
+        : null;
 
   return (
     <Pressable
@@ -96,19 +98,22 @@ export function Button({
       style={({ pressed }) => [
         styles.base,
         {
-          backgroundColor: bg,
+          backgroundColor: gradient ? "transparent" : backgroundColor(variant, palette),
           borderColor: borderColor(variant, palette),
           borderWidth: variant === "secondary" || variant === "outline" ? 1 : 0,
-          opacity: isDisabled ? 0.55 : pressed ? 0.85 : 1,
+          opacity: isDisabled ? 0.5 : pressed ? 0.88 : 1,
+          transform: [{ scale: pressed && !isDisabled ? 0.985 : 1 }],
           minHeight: minTouchTarget,
+          shadowColor: gradient ? palette.shadow : "transparent",
+          shadowOpacity: gradient ? 0.24 : 0,
         },
         fullWidth && { alignSelf: "stretch" },
         style,
       ]}
     >
-      {variant === "gold" ? (
+      {gradient ? (
         <LinearGradient
-          colors={[palette.goldSoft, palette.saffron]}
+          colors={gradient}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={[StyleSheet.absoluteFill, { borderRadius: radii.md }]}
@@ -124,35 +129,37 @@ function backgroundColor(variant: ButtonVariant, palette: ReturnType<typeof useT
     case "primary":
       return palette.temple;
     case "secondary":
-      return "transparent";
+      return palette.raised;
     case "ghost":
       return "transparent";
     case "danger":
       return palette.ruby;
     case "gold":
-      return "transparent";
+      return palette.gold;
     case "outline":
       return "transparent";
   }
 }
 
 function borderColor(variant: ButtonVariant, palette: ReturnType<typeof useTheme>["palette"]) {
-  if (variant === "secondary" || variant === "outline") return palette.borderStrong;
+  if (variant === "secondary") return palette.border;
+  if (variant === "outline") return palette.borderStrong;
   return "transparent";
 }
 
 function textColorFor(variant: ButtonVariant, palette: ReturnType<typeof useTheme>["palette"]) {
   switch (variant) {
     case "primary":
-      return palette.inverse;
+      return palette.onAccent;
     case "danger":
+      return "#FFFFFF";
     case "gold":
-      return palette.inverse;
+      return palette.onGold;
     case "secondary":
     case "outline":
       return palette.text;
     case "ghost":
-      return palette.temple;
+      return palette.gold;
   }
 }
 
@@ -161,6 +168,9 @@ const styles = StyleSheet.create({
     borderRadius: radii.md,
     overflow: "hidden",
     alignSelf: "flex-start",
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 10,
+    elevation: 2,
   },
   inner: {
     flexDirection: "row",

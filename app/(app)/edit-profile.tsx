@@ -19,14 +19,26 @@ import {
   MARITAL_STATUS_OPTIONS,
 } from "@/lib/constants";
 import { spacing } from "@/theme/tokens";
-import type { Gender } from "@/api/types/models";
+import type { Gender, Profile } from "@/api/types/models";
 
 export default function EditProfileScreen() {
+  const bundle = useProfileBundle();
+
+  if (bundle.isLoading) {
+    return (
+      <Screen title="Edit profile" showBack>
+        <LoadingState variant="detail" />
+      </Screen>
+    );
+  }
+
+  return <EditProfileForm key={bundle.data?.profile.userId ?? "profile"} profile={bundle.data?.profile} />;
+}
+
+function EditProfileForm({ profile }: { profile?: Profile }) {
   const router = useRouter();
   const toast = useToast();
-  const bundle = useProfileBundle();
   const save = useUpdateProfile();
-  const profile = bundle.data?.profile;
 
   const [name, setName] = useState(profile?.name ?? "");
   const [headline, setHeadline] = useState(profile?.headline ?? "");
@@ -46,14 +58,6 @@ export default function EditProfileScreen() {
   const [state, setState] = useState(profile?.state ?? "");
   const [country, setCountry] = useState(profile?.country ?? "India");
   const [error, setError] = useState<string | null>(null);
-
-  if (bundle.isLoading) {
-    return (
-      <Screen title="Edit profile" showBack>
-        <LoadingState variant="detail" />
-      </Screen>
-    );
-  }
 
   const submit = async () => {
     setError(null);

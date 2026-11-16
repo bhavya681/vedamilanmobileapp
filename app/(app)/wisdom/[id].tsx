@@ -77,14 +77,21 @@ export default function WisdomGuideScreen() {
   };
 
   return (
-    <Screen title={guide?.name ?? "Wisdom guide"} subtitle={guide?.summary} showBack>
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={90}>
+    <Screen
+      title={guide?.name ?? "Wisdom guide"}
+      subtitle={guide?.summary ?? "Vedic reflection"}
+      showBack
+      scroll={false}
+      padded={false}
+      edges={["top", "left", "right", "bottom"]}
+    >
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={0}>
         {query.isLoading ? (
           <LoadingState variant="detail" />
         ) : query.isError ? (
           <ErrorState error={query.error} onRetry={() => query.refetch()} />
         ) : (
-          <>
+          <View style={{ flex: 1, paddingHorizontal: spacing.lg, gap: spacing.xs }}>
             <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingVertical: spacing.md, gap: spacing.sm }}>
               {messages.length === 0 ? (
                 <View style={{ alignItems: "center", paddingVertical: spacing.xxl, gap: spacing.sm }}>
@@ -111,7 +118,7 @@ export default function WisdomGuideScreen() {
             <InlineNotice body={detail?.disclaimer ?? DISCLAIMER} />
             <ChatComposer onSend={send} sending={sending} placeholder="Ask the guide…" />
             <Button label="Open my journal" variant="ghost" size="sm" onPress={() => router.push("/(app)/journal")} />
-          </>
+          </View>
         )}
       </KeyboardAvoidingView>
     </Screen>

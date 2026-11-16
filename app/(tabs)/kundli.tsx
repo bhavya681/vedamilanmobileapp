@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { ArrowUpRight } from "lucide-react-native";
+import { ArrowUpRight, Calendar, Clock, MapPin } from "lucide-react-native";
 import React, { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -19,7 +19,7 @@ import { useHoroscope, useVedicExtras } from "@/hooks/useAstrology";
 import { useProfileBundle } from "@/hooks/useProfile";
 import { useTheme } from "@/theme/ThemeProvider";
 import { DISCLAIMER, HOUSE_THEMES, SIGNS } from "@/lib/constants";
-import { formatDashaBalance, titleCase } from "@/lib/format";
+import { formatDate, formatDashaBalance, formatTimeOfDay, titleCase } from "@/lib/format";
 import { spacing } from "@/theme/tokens";
 
 const SECTIONS = ["Chart", "Dashas", "Yogas", "Doshas", "Vargas"] as const;
@@ -59,22 +59,27 @@ export default function KundliScreen() {
     );
   }
 
+  const birth = bundle.data.birthDetails;
+  const birthDateValue = birth.birthDate?.includes("T") ? birth.birthDate.split("T")[0] : birth.birthDate;
+  const birthDateLabel = formatDate(birthDateValue, "d MMMM yyyy");
+  const birthTimeLabel = birth.birthTimeUnknown ? "Time unknown" : formatTimeOfDay(birth.birthTime);
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: palette.canvas }} edges={["top", "left", "right"]}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: spacing.giant }}>
-        <View style={{ paddingHorizontal: spacing.xl, paddingTop: spacing.sm }}>
-          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-end" }}>
-            <View>
-              <Text variant="display">Kundli</Text>
-              <Text variant="caption" tone="muted">
-                {bundle.data.birthDetails.placeName} · {bundle.data.birthDetails.birthDate}
+        <View style={{ paddingHorizontal: spacing.xl, paddingTop: spacing.sm, gap: spacing.md }}>
+          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" }}>
+            <View style={{ flex: 1 }}>
+              <Text variant="micro" tone="gold" style={{ letterSpacing: 1.6 }}>
+                YOUR KUNDLI
               </Text>
+              <Text variant="display" style={{ marginTop: 2 }}>Birth chart</Text>
             </View>
             <Pressable
               onPress={() => router.push("/(app)/birth-details")}
               accessibilityRole="button"
               accessibilityLabel="Edit birth details"
-              style={{ flexDirection: "row", alignItems: "center", gap: 4 }}
+              style={{ flexDirection: "row", alignItems: "center", gap: 4, paddingVertical: 4 }}
             >
               <Text variant="caption" tone="gold">
                 Edit
@@ -82,6 +87,32 @@ export default function KundliScreen() {
               <ArrowUpRight size={14} color={palette.gold} />
             </Pressable>
           </View>
+
+          <Card tone="outlined" style={{ gap: spacing.sm }}>
+            <View style={{ flexDirection: "row", alignItems: "flex-start", gap: spacing.sm }}>
+              <MapPin size={16} color={palette.gold} style={{ marginTop: 2 }} />
+              <View style={{ flex: 1 }}>
+                <Text variant="micro" tone="faint">BIRTH PLACE</Text>
+                <Text variant="body" weight="semibold">{birth.placeName || "—"}</Text>
+              </View>
+            </View>
+            <View style={{ flexDirection: "row", gap: spacing.lg, flexWrap: "wrap" }}>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
+                <Calendar size={15} color={palette.textMuted} />
+                <View>
+                  <Text variant="micro" tone="faint">DATE</Text>
+                  <Text variant="small" weight="semibold">{birthDateLabel}</Text>
+                </View>
+              </View>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
+                <Clock size={15} color={palette.textMuted} />
+                <View>
+                  <Text variant="micro" tone="faint">TIME</Text>
+                  <Text variant="small" weight="semibold">{birthTimeLabel}</Text>
+                </View>
+              </View>
+            </View>
+          </Card>
 
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: spacing.sm, paddingVertical: spacing.lg }}>
             {SECTIONS.map((s) => (

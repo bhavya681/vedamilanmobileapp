@@ -1,24 +1,23 @@
 import Constants from "expo-constants";
 import { useRouter } from "expo-router";
-import { LogOut } from "lucide-react-native";
+import { LogOut, Moon, Smartphone, Sun } from "lucide-react-native";
 import React from "react";
-import { Alert, View } from "react-native";
+import { Alert, Pressable, View } from "react-native";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { Chip } from "@/components/ui/Chip";
 import { ListRow } from "@/components/ui/ListRow";
 import { Screen } from "@/components/ui/Screen";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Text } from "@/components/ui/Text";
 import { useSession } from "@/providers/SessionProvider";
 import { useTheme } from "@/theme/ThemeProvider";
-import { spacing } from "@/theme/tokens";
+import { radii, spacing } from "@/theme/tokens";
 
 const MODES = [
-  { value: "light", label: "Light" },
-  { value: "dark", label: "Dark" },
-  { value: "system", label: "System" },
+  { value: "light", label: "Light", hint: "Bright, clean surfaces", icon: Sun },
+  { value: "dark", label: "Dark", hint: "True black background", icon: Moon },
+  { value: "system", label: "System", hint: "Match device setting", icon: Smartphone },
 ] as const;
 
 export default function SettingsScreen() {
@@ -43,11 +42,53 @@ export default function SettingsScreen() {
     <Screen title="Settings" subtitle={user?.user.email} showBack>
       <View style={{ gap: spacing.lg }}>
         <Card style={{ gap: spacing.md }}>
-          <SectionHeader title="Appearance" />
-          <View style={{ flexDirection: "row", gap: spacing.sm }}>
-            {MODES.map((option) => (
-              <Chip key={option.value} label={option.label} selected={mode === option.value} onPress={() => setMode(option.value)} />
-            ))}
+          <SectionHeader title="Appearance" subtitle="Choose how VedaMilan looks" />
+          <View style={{ gap: spacing.sm }}>
+            {MODES.map((option) => {
+              const Icon = option.icon;
+              const selected = mode === option.value;
+              return (
+                <Pressable
+                  key={option.value}
+                  onPress={() => setMode(option.value)}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected }}
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: spacing.md,
+                    padding: spacing.md,
+                    borderRadius: radii.lg,
+                    borderWidth: selected ? 1.5 : 1,
+                    borderColor: selected ? palette.gold : palette.border,
+                    backgroundColor: selected ? `${palette.gold}14` : palette.sunken,
+                  }}
+                >
+                  <View
+                    style={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: 20,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      backgroundColor: selected ? `${palette.gold}22` : palette.raised,
+                      borderWidth: 1,
+                      borderColor: selected ? `${palette.gold}55` : palette.border,
+                    }}
+                  >
+                    <Icon size={18} color={selected ? palette.gold : palette.textMuted} />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text variant="label" tone={selected ? "gold" : "default"}>
+                      {option.label}
+                    </Text>
+                    <Text variant="caption" tone="muted">
+                      {option.hint}
+                    </Text>
+                  </View>
+                </Pressable>
+              );
+            })}
           </View>
         </Card>
 

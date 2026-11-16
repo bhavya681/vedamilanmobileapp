@@ -27,8 +27,8 @@ export const onDark = {
 } as const;
 
 export const heroGradients = {
-  light: ["#2A2115", "#1A1611"],
-  dark: ["#241B10", "#171310"],
+  light: ["#1E3A5F", "#12243C"],
+  dark: ["#161616", "#000000"],
 } as const;
 
 export type ColorScheme = "light" | "dark";
@@ -50,6 +50,9 @@ export type Palette = {
   goldSoft: string;
   saffron: string;
   temple: string;
+  templeDeep: string;
+  primaryGradient: [string, string];
+  goldGradient: [string, string];
   emerald: string;
   amber: string;
   ruby: string;
@@ -58,6 +61,8 @@ export type Palette = {
   onGold: string;
   tabBar: string;
   tabBorder: string;
+  tabActive: string;
+  shadow: string;
   skeleton: string;
   skeletonHighlight: string;
   chartLine: string;
@@ -65,65 +70,75 @@ export type Palette = {
 };
 
 const light: Palette = {
-  canvas: "#F7F1E3",
-  raised: "#FAF6EE",
-  sunken: "#EFE6D4",
-  overlay: "rgba(12, 10, 8, 0.46)",
-  border: "rgba(20, 17, 14, 0.10)",
-  borderStrong: "rgba(20, 17, 14, 0.18)",
-  text: "#14110E",
-  textMuted: "#5C5348",
-  textFaint: "#8A8072",
-  inverse: "#FAF6EE",
-  inverseSurface: "#241E17",
-  onInverseSurface: "#FAF6EE",
-  gold: "#B98A2C",
-  goldSoft: "#D4AF37",
-  saffron: "#C47A1A",
+  canvas: "#F6F4EF",
+  raised: "#FFFFFF",
+  sunken: "#EEEAE1",
+  overlay: "rgba(11, 15, 22, 0.52)",
+  border: "rgba(20, 26, 38, 0.08)",
+  borderStrong: "rgba(20, 26, 38, 0.16)",
+  text: "#141A26",
+  textMuted: "#5A6270",
+  textFaint: "#8A909B",
+  inverse: "#FFFFFF",
+  inverseSurface: "#162033",
+  onInverseSurface: "#F7F5EF",
+  gold: "#A87B27",
+  goldSoft: "#C9A24B",
+  saffron: "#C0701B",
   temple: "#1F3A5F",
-  emerald: "#047857",
+  templeDeep: "#142A47",
+  primaryGradient: ["#274A75", "#162F52"],
+  goldGradient: ["#D9BC72", "#B98A2C"],
+  emerald: "#0F7A5A",
   amber: "#B45309",
-  ruby: "#BE123C",
+  ruby: "#B4233C",
   rose: "#B76E79",
   onAccent: "#FFFFFF",
-  onGold: "#14110E",
-  tabBar: "rgba(250, 246, 238, 0.94)",
-  tabBorder: "rgba(20, 17, 14, 0.08)",
-  skeleton: "#E6DCC8",
-  skeletonHighlight: "#F2EADA",
+  onGold: "#1B1408",
+  tabBar: "rgba(255, 255, 255, 0.97)",
+  tabBorder: "rgba(20, 26, 38, 0.07)",
+  tabActive: "rgba(168, 123, 39, 0.12)",
+  shadow: "rgba(20, 26, 38, 0.10)",
+  skeleton: "#E8E3D9",
+  skeletonHighlight: "#F3EFE6",
   chartLine: "#1F3A5F",
   chartFill: "rgba(31, 58, 95, 0.06)",
 };
 
 const dark: Palette = {
-  canvas: "#0C0A08",
-  raised: "#16120E",
-  sunken: "#100D0A",
-  overlay: "rgba(0, 0, 0, 0.62)",
-  border: "rgba(247, 241, 227, 0.10)",
-  borderStrong: "rgba(247, 241, 227, 0.20)",
-  text: "#F7F1E3",
-  textMuted: "#B8AEA0",
-  textFaint: "#8C8377",
-  inverse: "#14110E",
-  inverseSurface: "#F2EADA",
-  onInverseSurface: "#14110E",
-  gold: "#D4AF37",
-  goldSoft: "#E0C264",
+  canvas: "#000000",
+  raised: "#121212",
+  sunken: "#0A0A0A",
+  overlay: "rgba(0, 0, 0, 0.72)",
+  border: "rgba(255, 255, 255, 0.10)",
+  borderStrong: "rgba(255, 255, 255, 0.18)",
+  text: "#F5F3EE",
+  textMuted: "#A8A8A8",
+  textFaint: "#737373",
+  inverse: "#000000",
+  inverseSurface: "#F5F3EE",
+  onInverseSurface: "#0A0A0A",
+  gold: "#D8B45A",
+  goldSoft: "#E6CB84",
   saffron: "#E0A84A",
-  temple: "#5A7FA8",
+  temple: "#6EA8FF",
+  templeDeep: "#1C3A66",
+  primaryGradient: ["#1A1A1A", "#000000"],
+  goldGradient: ["#E8CF8C", "#C79A3E"],
   emerald: "#34D399",
   amber: "#FBBF24",
   ruby: "#FB7185",
   rose: "#D4A0A8",
-  onAccent: "#14110E",
-  onGold: "#14110E",
-  tabBar: "rgba(18, 15, 12, 0.94)",
-  tabBorder: "rgba(247, 241, 227, 0.08)",
-  skeleton: "#221C16",
-  skeletonHighlight: "#2C251D",
-  chartLine: "#D4AF37",
-  chartFill: "rgba(212, 175, 55, 0.08)",
+  onAccent: "#FFFFFF",
+  onGold: "#14110A",
+  tabBar: "rgba(0, 0, 0, 0.96)",
+  tabBorder: "rgba(255, 255, 255, 0.10)",
+  tabActive: "rgba(216, 180, 90, 0.16)",
+  shadow: "rgba(0, 0, 0, 0.8)",
+  skeleton: "#1A1A1A",
+  skeletonHighlight: "#242424",
+  chartLine: "#D8B45A",
+  chartFill: "rgba(216, 180, 90, 0.10)",
 };
 
 export const palettes: Record<ColorScheme, Palette> = { light, dark };

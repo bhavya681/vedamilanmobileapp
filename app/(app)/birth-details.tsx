@@ -19,14 +19,32 @@ import { useToast } from "@/components/feedback/ToastProvider";
 import { AYANAMSHA_OPTIONS, CHART_STYLE_OPTIONS, DISCLAIMER } from "@/lib/constants";
 import { useTheme } from "@/theme/ThemeProvider";
 import { spacing } from "@/theme/tokens";
+import type { BirthDetails } from "@/api/types/models";
 
 export default function BirthDetailsScreen() {
+  const bundle = useProfileBundle();
+
+  if (bundle.isLoading) {
+    return (
+      <Screen title="Birth details" showBack>
+        <LoadingState variant="detail" />
+      </Screen>
+    );
+  }
+
+  return (
+    <BirthDetailsForm
+      key={bundle.data?.birthDetails?.birthDate ?? "new"}
+      existing={bundle.data?.birthDetails ?? undefined}
+    />
+  );
+}
+
+function BirthDetailsForm({ existing }: { existing?: BirthDetails }) {
   const { palette } = useTheme();
   const router = useRouter();
   const toast = useToast();
-  const bundle = useProfileBundle();
   const save = useSaveBirthDetails();
-  const existing = bundle.data?.birthDetails;
 
   const [birthDate, setBirthDate] = useState<Date | null>(
     existing?.birthDate ? new Date(existing.birthDate) : null,
@@ -114,14 +132,6 @@ export default function BirthDetailsScreen() {
     }
   };
 
-  if (bundle.isLoading) {
-    return (
-      <Screen title="Birth details" showBack>
-        <LoadingState variant="detail" />
-      </Screen>
-    );
-  }
-
   return (
     <Screen title="Birth details" subtitle="Astrology accuracy depends on exact time and place" showBack>
       <View style={{ gap: spacing.lg }}>
@@ -137,7 +147,7 @@ export default function BirthDetailsScreen() {
           <TimeField label="Time of birth" value={birthTime} onChange={setBirthTime} hint={timeUnknown ? "Using 12:00 noon as a placeholder." : undefined} />
           <Pressable
             onPress={() => setTimeUnknown((v) => !v)}
-            style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}
+            style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm, minHeight: 40 }}
             accessibilityRole="checkbox"
             accessibilityState={{ checked: timeUnknown }}
           >
@@ -147,7 +157,7 @@ export default function BirthDetailsScreen() {
                 height: 20,
                 borderRadius: 6,
                 borderWidth: 1.5,
-                borderColor: timeUnknown ? palette.gold : palette.border,
+                borderColor: timeUnknown ? palette.gold : palette.borderStrong,
                 backgroundColor: timeUnknown ? palette.gold : "transparent",
               }}
             />

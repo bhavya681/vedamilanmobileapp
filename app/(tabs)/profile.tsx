@@ -78,7 +78,7 @@ export default function ProfileScreen() {
         { title: "Shortlist", icon: <Star size={17} color={palette.textMuted} />, route: "/(app)/shortlist" },
         { title: "Visitors", icon: <Eye size={17} color={palette.textMuted} />, route: "/(app)/visitors" },
         { title: "Connections", icon: <Heart size={17} color={palette.textMuted} />, route: "/(app)/connections" },
-        { title: "Chats", icon: <MessageCircle size={17} color={palette.textMuted} />, route: "/(app)/chats" },
+        { title: "Chats", icon: <MessageCircle size={17} color={palette.textMuted} />, route: "/(tabs)/chats" },
         { title: "Wisdom journal", icon: <BookHeart size={17} color={palette.textMuted} />, route: "/(app)/journal" },
         { title: "Consultations", icon: <Sparkles size={17} color={palette.textMuted} />, route: "/(app)/consultations" },
       ],

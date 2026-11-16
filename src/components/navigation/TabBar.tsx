@@ -1,6 +1,6 @@
 import type { BottomTabBarProps } from "expo-router/build/layouts/Tabs";
 import * as Haptics from "expo-haptics";
-import { Compass, Home, Heart, MessageCircle, User } from "lucide-react-native";
+import { Compass, Home, MessageCircle, Orbit, User } from "lucide-react-native";
 import React from "react";
 import { Platform, Pressable, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -9,23 +9,15 @@ import { Text } from "@/components/ui/Text";
 import { useTheme } from "@/theme/ThemeProvider";
 import { radii, spacing } from "@/theme/tokens";
 
-const ICONS = {
-  index: Home,
-  kundli: Heart,
-  discover: Compass,
-  chats: MessageCircle,
-  profile: User,
-} as const;
+const TABS = [
+  { name: "index", label: "Home", icon: Home },
+  { name: "discover", label: "Matches", icon: Compass },
+  { name: "kundli", label: "Kundli", icon: Orbit },
+  { name: "chats", label: "Chat", icon: MessageCircle },
+  { name: "profile", label: "Profile", icon: User },
+] as const;
 
-const LABELS = {
-  index: "Home",
-  kundli: "Horoscope",
-  discover: "Matches",
-  chats: "Chat",
-  profile: "Profile",
-} as const;
-
-type RouteName = keyof typeof ICONS;
+const VISIBLE = new Map(TABS.map((tab) => [tab.name, tab]));
 
 export function TabBar({ state, emitter, navigateToTab }: BottomTabBarProps) {
   const { palette } = useTheme();
@@ -43,8 +35,9 @@ export function TabBar({ state, emitter, navigateToTab }: BottomTabBarProps) {
       ]}
     >
       {state.routes.map((route, index) => {
-        const name = route.name as RouteName;
-        const Icon = ICONS[name] ?? Home;
+        const tab = VISIBLE.get(route.name as (typeof TABS)[number]["name"]);
+        if (!tab) return null;
+        const Icon = tab.icon;
         const focused = state.index === index;
 
         return (
@@ -63,18 +56,31 @@ export function TabBar({ state, emitter, navigateToTab }: BottomTabBarProps) {
             }}
             accessibilityRole="tab"
             accessibilityState={{ selected: focused }}
-            accessibilityLabel={LABELS[name] ?? name}
-            style={styles.item}
+            accessibilityLabel={tab.label}
+            style={({ pressed }) => [styles.item, pressed && { opacity: 0.7 }]}
           >
-            <View style={{ alignItems: "center", justifyContent: "center" }}>
-              <Icon size={20} color={focused ? palette.gold : palette.textFaint} strokeWidth={focused ? 2.2 : 1.6} />
+            <View
+              style={[
+                styles.iconWrap,
+                focused && { backgroundColor: palette.tabActive },
+              ]}
+            >
+              <Icon
+                size={focused ? 21 : 20}
+                color={focused ? palette.gold : palette.textFaint}
+                strokeWidth={focused ? 2.2 : 1.7}
+              />
             </View>
             <Text
-              variant="caption"
+              variant="micro"
               weight={focused ? "semibold" : "medium"}
-              style={{ color: focused ? palette.gold : palette.textFaint, marginTop: 4 }}
+              style={{
+                color: focused ? palette.gold : palette.textFaint,
+                marginTop: 3,
+                letterSpacing: 0.2,
+              }}
             >
-              {LABELS[name] ?? name}
+              {tab.label}
             </Text>
           </Pressable>
         );
@@ -87,15 +93,27 @@ const styles = StyleSheet.create({
   wrap: {
     flexDirection: "row",
     borderTopWidth: StyleSheet.hairlineWidth,
-    paddingTop: spacing.xs,
+    paddingTop: spacing.sm,
     paddingHorizontal: spacing.sm,
     minHeight: 64,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 8,
   },
   item: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
     minHeight: 48,
-    paddingVertical: spacing.xs,
+    paddingVertical: 2,
+  },
+  iconWrap: {
+    width: 40,
+    height: 28,
+    borderRadius: radii.pill,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

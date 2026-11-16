@@ -14,7 +14,7 @@ type Props = {
   tone?: "neutral" | "gold" | "emerald" | "ruby";
 };
 
-export function Chip({ label, selected, onPress, size = "md", tone = "neutral" }: Props) {
+export function Chip({ label, selected, onPress, size = "md", tone = "gold" }: Props) {
   const { palette } = useTheme();
   const accent =
     tone === "gold" ? palette.gold : tone === "emerald" ? palette.emerald : tone === "ruby" ? palette.ruby : palette.temple;
@@ -22,7 +22,7 @@ export function Chip({ label, selected, onPress, size = "md", tone = "neutral" }
   const content = (
     <>
       {selected && onPress ? (
-        <Check size={13} color={accent} style={{ marginRight: 4 }} />
+        <Check size={13} color={accent} style={{ marginRight: 4 }} strokeWidth={2.4} />
       ) : null}
       <Text
         variant="caption"
@@ -39,8 +39,8 @@ export function Chip({ label, selected, onPress, size = "md", tone = "neutral" }
     styles.chip,
     {
       paddingHorizontal: size === "sm" ? spacing.sm + 2 : spacing.md,
-      paddingVertical: size === "sm" ? 5 : 7,
-      borderColor: selected ? accent : palette.border,
+      paddingVertical: size === "sm" ? 5 : 8,
+      borderColor: selected ? `${accent}80` : palette.border,
       backgroundColor: selected ? `${accent}14` : palette.raised,
     },
   ];
@@ -53,7 +53,7 @@ export function Chip({ label, selected, onPress, size = "md", tone = "neutral" }
       accessibilityRole="button"
       accessibilityState={{ selected }}
       accessibilityLabel={label}
-      hitSlop={8}
+      hitSlop={6}
       style={({ pressed }) => [style, pressed && { opacity: 0.75 }]}
     >
       {content}
@@ -66,6 +66,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderRadius: radii.pill,
-    borderWidth: StyleSheet.hairlineWidth,
+    borderWidth: 1,
   },
 });

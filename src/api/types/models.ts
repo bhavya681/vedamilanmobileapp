@@ -126,6 +126,7 @@ export type YogaInsightDetail = {
   lifeAreas?: string[];
   activationNow?: string;
   engineNote?: string;
+  statusLabel?: string;
   exemplar?: Record<string, unknown>;
 };
 
@@ -144,7 +145,7 @@ export type DoshaItem = {
   present: boolean;
   severity?: string;
   notes?: string;
-  insight?: string;
+  insight?: string | YogaInsightDetail;
 };
 
 export type HouseChartHouse = {
@@ -455,10 +456,16 @@ export type Celebration = {
   id: string;
   name: string;
   category?: string;
-  photo?: string | null;
+  field?: string;
+  place?: string;
   birthDate?: string;
   sunSign?: string;
   moonSign?: string;
+  photo?: string | null;
+  imageUrl?: string | null;
+  image?: string | null;
+  timeAccuracy?: string;
+  note?: string;
   [key: string]: unknown;
 };
 
