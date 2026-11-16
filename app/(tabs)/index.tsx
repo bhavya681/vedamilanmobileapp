@@ -5,13 +5,14 @@ import {
   ChevronRight,
   HeartHandshake,
   Mic,
-  Sparkles,
   Search,
+  Sparkles,
   Star,
   TrendingUp,
+  Bell,
 } from "lucide-react-native";
 import React from "react";
-import { ActivityIndicator, ScrollView, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useQuery } from "@tanstack/react-query";
@@ -68,11 +69,14 @@ export default function HomeScreen() {
   });
 
   const profile = bundle.data?.profile;
+  const completion = profile?.completion?.score ?? profile?.profileCompletion ?? 0;
   const photo = profile?.photos?.find((p) => p.isPrimary)?.secureUrl ?? profile?.photos?.[0]?.secureUrl;
   const recs = (recommendations.data?.recommendations ?? recommendations.data?.items ?? []).slice(0, 6);
   const horoscope = kundli.payload?.horoscope;
   const dasha = kundli.payload?.dasha;
   const meta = kundli.payload?.meta;
+
+  const isBirthIncomplete = !birth;
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: palette.canvas }} edges={["top", "left", "right"]}>
@@ -93,15 +97,31 @@ export default function HomeScreen() {
         </View>
 
         <View style={{ paddingHorizontal: spacing.xl, gap: spacing.xl }}>
+
+          {isBirthIncomplete ? (
+            <Card padded style={{ gap: spacing.md, backgroundColor: `${palette.goldSoft}12`, borderColor: `${palette.goldSoft}40` }}>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.md }}>
+                <Bell size={18} color={palette.gold} />
+                <Text variant="body" weight="semibold" style={{ flex: 1 }}>
+                  Complete your birth details
+                </Text>
+                <Button label="Add now" variant="gold" size="sm" onPress={() => router.push("/(app)/birth-details")} />
+              </View>
+              <Text variant="small" tone="muted">
+                Your Vedic chart, panchanga and compatibility depend on accurate birth date, time and place.
+              </Text>
+            </Card>
+          ) : null}
+
           <Card tone="sunken" padded={false} style={styles.hero}>
             <View style={{ padding: spacing.xl }}>
               <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" }}>
                 <View>
-                  <Text variant="micro" tone="gold" style={{ letterSpacing: 1.5 }}>
-                    YOUR VEDIC SNAPSHOT
+                  <Text variant="micro" tone="gold" style={{ letterSpacing: 1.2 }}>
+                    Your Vedic snapshot
                   </Text>
                   <Text variant="display" numberOfLines={1} weight="semibold" style={{ marginTop: 4 }}>
-                    {horoscope ? horoscope.lagnaSign : kundli.isLoading ? "Casting…" : "—"}
+                    {horoscope ? horoscope.lagnaSign : kundli.isLoading ? "—" : "—"}
                   </Text>
                   <Text variant="caption" tone="muted" style={{ marginTop: 2 }}>
                     {horoscope ? `Lagna · ${horoscope.lagnaNakshatra ?? "Vedic sidereal"}` : "Add your birth details to cast your chart."}
@@ -117,9 +137,9 @@ export default function HomeScreen() {
               </View>
 
               {kundli.isLoading ? (
-                <View style={{ marginTop: spacing.lg }}>
+                <View style={{ marginTop: spacing.lg, alignItems: "center" }}>
                   <ActivityIndicator color={palette.gold} style={{ marginTop: spacing.sm }} />
-                  <Text variant="small" tone="muted" style={{ marginTop: spacing.sm, textAlign: "center" }}>
+                  <Text variant="small" tone="muted" style={{ marginTop: spacing.sm }}>
                     Calculating planetary positions…
                   </Text>
                 </View>
@@ -145,19 +165,19 @@ export default function HomeScreen() {
                   </View>
                   <View style={{ flexDirection: "row", gap: spacing.sm, marginTop: spacing.lg, alignItems: "center" }}>
                     <Button
-                      label="Open kundli"
+                      label="Open horoscope"
                       variant="gold"
                       size="sm"
                       onPress={() => router.push("/(tabs)/kundli")}
                       style={{ flex: 1 }}
                     />
-                    <Button
-                      label="Ask the Guide"
-                      variant="ghost"
-                      size="sm"
-                      onPress={() => router.push("/(tabs)/ai")}
-                      style={{ flex: 1 }}
-                    />
+                <Button
+                  label="Ask the Guide"
+                  variant="ghost"
+                  size="sm"
+                  onPress={() => router.push("/chats")}
+                  style={{ flex: 1 }}
+                />
                   </View>
                   {meta?.ayanamsha ? (
                     <Text variant="micro" tone="faint" style={{ marginTop: spacing.md, textAlign: "center" }}>
@@ -169,63 +189,85 @@ export default function HomeScreen() {
             </View>
           </Card>
 
-          <Card padded style={{ gap: spacing.md }}>
-            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-              <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
-                <CalendarDays size={16} color={palette.gold} />
-                <Text variant="label">Today&apos;s panchanga</Text>
-              </View>
-              <Text variant="micro" tone="faint">
-                {formatDate(new Date(), "EEE, d MMM")}
-              </Text>
+          <View>
+            <SectionHeader title="Today at a glance" subtitle="Quick actions and today's panchanga" />
+            <View style={{ flexDirection: "row", gap: spacing.md }}>
+              <QuickTile
+                icon={CalendarDays}
+                label="Panchanga"
+                value={panchanga.data?.tithi?.name ?? "—"}
+                subtitle={panchanga.data?.nakshatra?.name ?? "Vedic almanac"}
+                onPress={() => router.push("/(app)/panchanga")}
+              />
+              <QuickTile
+                icon={HeartHandshake}
+                label="Compatibility"
+                value="Check"
+                subtitle="Compare charts"
+                onPress={() => router.push("/(app)/compatibility")}
+              />
+              <QuickTile
+                icon={Sparkles}
+                label="AI Guide"
+                value="Ask"
+                subtitle="Vedic insights"
+                onPress={() => router.push("/chats")}
+              />
+              <QuickTile
+                icon={Bell}
+                label="Notifications"
+                value="0 new"
+                subtitle="Updates"
+                onPress={() => router.push("/(app)/notifications")}
+              />
             </View>
-            {panchanga.isLoading ? (
-              <View style={{ marginTop: spacing.md }}>
-                <Text variant="small" tone="muted" style={{ textAlign: "center" }}>
-                  Reading the sky…
+          </View>
+
+          {panchanga.data && !panchanga.isLoading && !panchanga.isError ? (
+            <Card padded style={{ gap: spacing.md }}>
+              <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
+                  <CalendarDays size={16} color={palette.gold} />
+                  <Text variant="label">Today&rsquo;s panchanga</Text>
+                </View>
+                <Text variant="micro" tone="faint">
+                  {formatDate(new Date(), "EEE, d MMM")}
                 </Text>
               </View>
-            ) : panchanga.isError ? (
-              <Text variant="small" tone="muted" style={{ marginTop: spacing.sm, textAlign: "center" }}>
-                Panchanga is unavailable right now.
-              </Text>
-            ) : (
-              <>
-                <View style={{ flexDirection: "row", flexWrap: "wrap", marginTop: spacing.md, rowGap: spacing.md }}>
-                  {[
-                    ["Tithi", panchanga.data?.tithi?.name],
-                    ["Nakshatra", panchanga.data?.nakshatra?.name],
-                    ["Yoga", panchanga.data?.yoga?.name],
-                    ["Vara", panchanga.data?.vara?.name],
-                  ].map(([label, value]) => (
-                    <View key={label} style={{ width: "50%" }}>
-                      <Text variant="micro" tone="faint">
-                        {label?.toUpperCase()}
-                      </Text>
-                      <Text variant="small" numberOfLines={1} weight="semibold">
-                        {value ?? "—"}
-                      </Text>
-                    </View>
-                  ))}
-                </View>
-                <View style={{ flexDirection: "row", gap: spacing.lg, marginTop: spacing.md, justifyContent: "center" }}>
-                  <Text variant="caption" tone="muted">
-                    Sunrise {formatTimeOfDay(panchanga.data?.sunrise)}
-                  </Text>
-                  <Text variant="caption" tone="muted">
-                    Sunset {formatTimeOfDay(panchanga.data?.sunset)}
-                  </Text>
-                </View>
-                <Button
-                  label="Full panchanga"
-                  variant="ghost"
-                  size="sm"
-                  onPress={() => router.push("/(app)/panchanga")}
-                  style={{ alignSelf: "flex-start", marginTop: spacing.xs }}
-                />
-              </>
-            )}
-          </Card>
+              <View style={{ flexDirection: "row", flexWrap: "wrap", marginTop: spacing.md, rowGap: spacing.md }}>
+                {[
+                  ["Tithi", panchanga.data?.tithi?.name],
+                  ["Nakshatra", panchanga.data?.nakshatra?.name],
+                  ["Yoga", panchanga.data?.yoga?.name],
+                  ["Vara", panchanga.data?.vara?.name],
+                ].map(([label, value]) => (
+                  <View key={label} style={{ width: "50%" }}>
+                    <Text variant="micro" tone="faint">
+                      {label?.toUpperCase()}
+                    </Text>
+                    <Text variant="small" numberOfLines={1} weight="semibold">
+                      {value ?? "—"}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+              <View style={{ flexDirection: "row", gap: spacing.lg, marginTop: spacing.md, justifyContent: "center" }}>
+                <Text variant="caption" tone="muted">
+                  Sunrise {formatTimeOfDay(panchanga.data?.sunrise)}
+                </Text>
+                <Text variant="caption" tone="muted">
+                  Sunset {formatTimeOfDay(panchanga.data?.sunset)}
+                </Text>
+              </View>
+              <Button
+                label="Full panchanga"
+                variant="ghost"
+                size="sm"
+                onPress={() => router.push("/(app)/panchanga")}
+                style={{ alignSelf: "flex-start", marginTop: spacing.xs }}
+              />
+            </Card>
+          ) : null}
 
           <View>
             <SectionHeader
@@ -340,6 +382,40 @@ function MiniStat({ label, value }: { label: string; value: string }) {
   );
 }
 
+function QuickTile({
+  icon: Icon,
+  label,
+  value,
+  subtitle,
+  onPress,
+}: {
+  icon: React.ComponentType<{ size?: number; color?: string }>;
+  label: string;
+  value: string;
+  subtitle: string;
+  onPress: () => void;
+}) {
+  return (
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      style={styles.quickTile}
+      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+    >
+      <View style={{ width: 40, height: 40, borderRadius: radii.md, backgroundColor: "#14110E12", alignItems: "center", justifyContent: "center" }}>
+        <Icon size={18} color="#C89B3C" />
+      </View>
+      <Text variant="small" weight="semibold" numberOfLines={1} style={{ marginTop: spacing.xs }}>
+        {label}
+      </Text>
+      <Text variant="micro" tone="muted" numberOfLines={1} style={{ marginTop: spacing.xxs }}>
+        {value}
+      </Text>
+    </Pressable>
+  );
+}
+
 const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
@@ -358,5 +434,15 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
     borderRadius: radii.xl,
     borderWidth: StyleSheet.hairlineWidth,
+  },
+  quickTile: {
+    flex: 1,
+    minWidth: "22%",
+    padding: spacing.md,
+    gap: spacing.sm,
+    borderRadius: radii.xl,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: "#14110E10",
+    alignItems: "center",
   },
 });

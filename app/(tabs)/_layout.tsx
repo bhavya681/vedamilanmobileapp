@@ -12,9 +12,9 @@ export default function TabsLayout() {
         screenOptions={{ headerShown: false, animation: "fade" }}
       >
         <Tabs.Screen name="index" options={{ title: "Home" }} />
-        <Tabs.Screen name="discover" options={{ title: "Discover" }} />
-        <Tabs.Screen name="kundli" options={{ title: "Kundli" }} />
-        <Tabs.Screen name="ai" options={{ title: "AI Guide" }} />
+        <Tabs.Screen name="kundli" options={{ title: "Horoscope" }} />
+        <Tabs.Screen name="discover" options={{ title: "Matches" }} />
+        <Tabs.Screen name="chats" options={{ title: "Chat" }} />
         <Tabs.Screen name="profile" options={{ title: "Profile" }} />
       </Tabs>
     </AuthGate>

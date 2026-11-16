@@ -1,6 +1,6 @@
 import type { BottomTabBarProps } from "expo-router/build/layouts/Tabs";
 import * as Haptics from "expo-haptics";
-import { Compass, Heart, Home, Sparkles, User } from "lucide-react-native";
+import { Compass, Home, Heart, MessageCircle, User } from "lucide-react-native";
 import React from "react";
 import { Platform, Pressable, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -11,17 +11,17 @@ import { radii, spacing } from "@/theme/tokens";
 
 const ICONS = {
   index: Home,
-  discover: Compass,
   kundli: Heart,
-  ai: Sparkles,
+  discover: Compass,
+  chats: MessageCircle,
   profile: User,
 } as const;
 
 const LABELS = {
   index: "Home",
-  discover: "Discover",
-  kundli: "Kundli",
-  ai: "Guide",
+  kundli: "Horoscope",
+  discover: "Matches",
+  chats: "Chat",
   profile: "Profile",
 } as const;
 
@@ -46,7 +46,6 @@ export function TabBar({ state, emitter, navigateToTab }: BottomTabBarProps) {
         const name = route.name as RouteName;
         const Icon = ICONS[name] ?? Home;
         const focused = state.index === index;
-        const isCenter = name === "ai";
 
         return (
           <Pressable
@@ -67,21 +66,9 @@ export function TabBar({ state, emitter, navigateToTab }: BottomTabBarProps) {
             accessibilityLabel={LABELS[name] ?? name}
             style={styles.item}
           >
-            {isCenter ? (
-              <View
-                style={[
-                  styles.center,
-                  {
-                    backgroundColor: focused ? palette.gold : palette.temple,
-                    shadowColor: focused ? palette.gold : "transparent",
-                  },
-                ]}
-              >
-                <Icon size={20} color={focused ? palette.onAccent : palette.inverse} />
-              </View>
-            ) : (
+            <View style={{ alignItems: "center", justifyContent: "center" }}>
               <Icon size={20} color={focused ? palette.gold : palette.textFaint} strokeWidth={focused ? 2.2 : 1.6} />
-            )}
+            </View>
             <Text
               variant="caption"
               weight={focused ? "semibold" : "medium"}
@@ -110,18 +97,5 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     minHeight: 48,
     paddingVertical: spacing.xs,
-  },
-  center: {
-    width: 46,
-    height: 46,
-    borderRadius: radii.xxl,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: -20,
-    shadowOpacity: 0.4,
-    shadowRadius: 14,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 8,
-    borderWidth: 1,
   },
 });
