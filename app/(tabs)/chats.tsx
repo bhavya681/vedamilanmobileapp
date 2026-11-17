@@ -1,4 +1,4 @@
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { ChevronLeft, MessageCircle, Sparkles } from "lucide-react-native";
 import React, { useEffect, useRef, useState } from "react";
@@ -21,7 +21,9 @@ import { MessageBubble, type ChatBubbleMessage } from "@/components/chat/Message
 import { Card } from "@/components/ui/Card";
 import { Text } from "@/components/ui/Text";
 import { useToast } from "@/components/feedback/ToastProvider";
+import { useChatList } from "@/hooks/useChat";
 import { AI_AGENTS } from "@/lib/constants";
+import { timeAgo } from "@/lib/format";
 import { useTheme } from "@/theme/ThemeProvider";
 import { radii, spacing } from "@/theme/tokens";
 
@@ -118,8 +120,10 @@ function GuruAvatar({ title, selected, size = 44 }: { title: string; selected?: 
 
 export default function ChatsTabScreen() {
   const { palette } = useTheme();
+  const router = useRouter();
   const toast = useToast();
   const { agent: agentParam } = useLocalSearchParams<{ agent?: string }>();
+  const conversations = useChatList();
   const initialAgent = AI_AGENTS.find((item) => item.key === agentParam) ?? null;
   const [agent, setAgent] = useState<(typeof AI_AGENTS)[number] | null>(initialAgent);
   const [messages, setMessages] = useState<ChatBubbleMessage[]>([]);
@@ -198,6 +202,69 @@ export default function ChatsTabScreen() {
           contentContainerStyle={{ padding: spacing.xl, paddingBottom: spacing.giant, gap: spacing.sm }}
           showsVerticalScrollIndicator={false}
         >
+          {conversations.data?.length ? (
+            <View style={{ gap: spacing.sm }}>
+              <Text variant="micro" tone="faint" style={{ marginTop: spacing.xs }}>
+                YOUR CONVERSATIONS
+              </Text>
+              {conversations.data.map((chat) => (
+                <Card
+                  key={chat.id}
+                  onPress={() =>
+                    router.push({
+                      pathname: "/(app)/chat/[id]",
+                      params: { id: chat.id, other: chat.otherUserId, name: chat.name },
+                    } as never)
+                  }
+                  accessibilityLabel={`Open conversation with ${chat.name}`}
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: spacing.md,
+                    paddingVertical: spacing.md,
+                  }}
+                >
+                  <GuruAvatar title={chat.name} size={42} />
+                  <View style={{ flex: 1, gap: 2 }}>
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
+                      <Text variant="body" weight="semibold" style={{ flex: 1 }} numberOfLines={1}>
+                        {chat.name}
+                      </Text>
+                      {chat.lastMessageAt ? (
+                        <Text variant="micro" tone="faint">
+                          {timeAgo(chat.lastMessageAt)}
+                        </Text>
+                      ) : null}
+                    </View>
+                    <Text variant="small" tone="muted" numberOfLines={1}>
+                      {chat.preview || "Say hello to begin."}
+                    </Text>
+                  </View>
+                  {chat.unread > 0 ? (
+                    <View
+                      style={{
+                        minWidth: 20,
+                        height: 20,
+                        borderRadius: 10,
+                        paddingHorizontal: 6,
+                        alignItems: "center",
+                        justifyContent: "center",
+                        backgroundColor: palette.gold,
+                      }}
+                    >
+                      <Text variant="micro" weight="bold" style={{ color: palette.onGold }}>
+                        {chat.unread > 99 ? "99+" : chat.unread}
+                      </Text>
+                    </View>
+                  ) : null}
+                </Card>
+              ))}
+            </View>
+          ) : null}
+
+          <Text variant="micro" tone="faint" style={{ marginTop: spacing.sm }}>
+            AI GURUS
+          </Text>
           {AI_AGENTS.map((item) => (
             <Card
               key={item.key}

@@ -10,8 +10,9 @@ import { ListRow } from "@/components/ui/ListRow";
 import { Screen } from "@/components/ui/Screen";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Text } from "@/components/ui/Text";
+import { useAppearanceController } from "@/hooks/useAppearance";
 import { useSession } from "@/providers/SessionProvider";
-import { useTheme } from "@/theme/ThemeProvider";
+import { THEME_PRESETS } from "@/theme/presets";
 import { radii, spacing } from "@/theme/tokens";
 
 const MODES = [
@@ -21,9 +22,11 @@ const MODES = [
 ] as const;
 
 export default function SettingsScreen() {
-  const { palette, mode, setMode } = useTheme();
+  const appearance = useAppearanceController();
+  const { palette, mode } = appearance;
   const { signOut, user } = useSession();
   const router = useRouter();
+  const activePreset = THEME_PRESETS.find((preset) => preset.id === appearance.theme) ?? THEME_PRESETS[0]!;
 
   const confirmSignOut = () => {
     Alert.alert("Sign out?", "You can sign back in at any time.", [
@@ -50,7 +53,7 @@ export default function SettingsScreen() {
               return (
                 <Pressable
                   key={option.value}
-                  onPress={() => setMode(option.value)}
+                  onPress={() => appearance.update({ mode: option.value })}
                   accessibilityRole="button"
                   accessibilityState={{ selected }}
                   style={{
@@ -90,6 +93,19 @@ export default function SettingsScreen() {
               );
             })}
           </View>
+          <ListRow
+            title="Theme & appearance"
+            subtitle={activePreset.name}
+            value={activePreset.id === "veda-gold" && appearance.expression !== "neutral" ? "Tinted" : "Curated"}
+            onPress={() => router.push("/(app)/appearance" as never)}
+          />
+          <Text variant="micro" tone="faint">
+            {appearance.saveError
+              ? "Saved on this device · will sync when online"
+              : appearance.saving
+                ? "Saving appearance…"
+                : "Appearance is saved to your account"}
+          </Text>
         </Card>
 
         <Card style={{ padding: 0 }}>
@@ -98,6 +114,11 @@ export default function SettingsScreen() {
           <ListRow title="Birth details" onPress={() => router.push("/(app)/birth-details")} />
           <ListRow title="Partner preferences" onPress={() => router.push("/(app)/preferences")} />
           <ListRow title="Privacy" onPress={() => router.push("/(app)/privacy")} />
+          <ListRow
+            title="Language & region"
+            subtitle="Date, time, currency, and AI language"
+            onPress={() => router.push("/(app)/locale" as never)}
+          />
         </Card>
 
         <Card style={{ padding: 0 }}>

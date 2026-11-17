@@ -114,7 +114,7 @@ export default function OnboardingScreen() {
     setStep((s) => Math.min(STEPS.length - 1, s + 1));
   };
 
-  const useCurrentLocation = async () => {
+  const detectCurrentLocation = async () => {
     setLocating(true);
     try {
       const permission = await Location.requestForegroundPermissionsAsync();
@@ -320,7 +320,7 @@ export default function OnboardingScreen() {
                   label={locating ? "Detecting location…" : "Use my current location"}
                   variant="secondary"
                   icon={<Navigation size={16} color={palette.gold} />}
-                  onPress={() => void useCurrentLocation()}
+                  onPress={() => void detectCurrentLocation()}
                   loading={locating}
                 />
                 <Input

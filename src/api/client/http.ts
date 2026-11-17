@@ -3,10 +3,13 @@ import { Platform } from "react-native";
 import { tokenStore } from "@/lib/auth/tokenStore";
 
 import { apiUrl, REQUEST_TIMEOUT_MS, UPLOAD_TIMEOUT_MS, WEB_URL } from "./config";
+import {
+  isApiFailure,
+  isApiSuccess,
+  readApiFailure,
+  type ApiEnvelope,
+} from "./envelope";
 import { ApiError, kindFromStatus } from "./errors";
-
-type ApiSuccess<T> = { success: true; data: T; meta?: Record<string, unknown> };
-type ApiFailure = { success: false; error: { code?: string; message?: string; details?: unknown } };
 
 export type RequestOptions = {
   method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
@@ -112,11 +115,12 @@ async function toApiError(response: Response): Promise<ApiError> {
   let message = `Request failed with status ${response.status}`;
   let details: unknown;
   try {
-    const body = (await response.json()) as ApiFailure;
-    if (body && body.success === false && body.error) {
-      code = body.error.code ?? code;
-      message = body.error.message ?? message;
-      details = body.error.details;
+    const body = (await response.json()) as unknown;
+    const failure = readApiFailure(body);
+    if (failure) {
+      code = failure.code ?? code;
+      message = failure.message ?? message;
+      details = failure.details;
     }
   } catch {
     // Non-JSON error body (e.g. HTML error page). Keep the generic message.
@@ -157,9 +161,9 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
     return undefined as T;
   }
 
-  let payload: ApiSuccess<T> | ApiFailure;
+  let payload: ApiEnvelope<T>;
   try {
-    payload = (await response.json()) as ApiSuccess<T> | ApiFailure;
+    payload = (await response.json()) as ApiEnvelope<T>;
   } catch {
     throw new ApiError({
       kind: "server",
@@ -169,8 +173,8 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
     });
   }
 
-  if (payload && payload.success === true) return payload.data;
-  if (payload && payload.success === false) {
+  if (isApiSuccess<T>(payload)) return payload.data;
+  if (isApiFailure(payload)) {
     throw new ApiError({
       kind: kindFromStatus(response.status),
       status: response.status,

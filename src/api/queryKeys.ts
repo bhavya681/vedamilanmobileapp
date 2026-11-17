@@ -3,9 +3,16 @@ export const queryKeys = {
     bundle: ["profile", "bundle"] as const,
     birthDetails: ["profile", "birth-details"] as const,
     preferences: ["profile", "preferences"] as const,
+    appearance: ["profile", "appearance"] as const,
+    locale: ["profile", "locale"] as const,
   },
   billing: {
     summary: ["billing", "summary"] as const,
+    invoices: ["billing", "invoices"] as const,
+  },
+  system: {
+    health: ["system", "health"] as const,
+    ready: ["system", "ready"] as const,
   },
   notifications: {
     list: ["notifications", "list"] as const,

@@ -14,6 +14,16 @@ export function useBilling() {
   });
 }
 
+export function useInvoices() {
+  const { isAuthenticated } = useSession();
+  return useQuery({
+    queryKey: queryKeys.billing.invoices,
+    queryFn: () => billingApi.invoices(),
+    enabled: isAuthenticated,
+    staleTime: 60_000,
+  });
+}
+
 export function useCheckout() {
   const qc = useQueryClient();
   return useMutation<CheckoutResult, unknown, { planCode: string; provider?: "STRIPE" | "RAZORPAY" }>({

@@ -7,14 +7,23 @@ export type TranslateResult = {
   targetLocale: string;
   provider?: string | null;
   label?: string;
+  available?: boolean;
+  message?: string;
 };
 
-function normalizeMessages(input: MessagesResponse | ChatMessage[]): {
+export type PusherAuthResult = {
+  auth: string;
+  channel_data?: string;
+};
+
+export type ChatMessagesPage = {
   messages: ChatMessage[];
   total?: number;
   page?: number;
   hasMore?: boolean;
-} {
+};
+
+function normalizeMessages(input: MessagesResponse | ChatMessage[]): ChatMessagesPage {
   if (Array.isArray(input)) return { messages: input };
   const messages = input.items ?? input.data ?? input.results ?? [];
   return {
@@ -68,6 +77,13 @@ export const chatApi = {
 
   translate: (input: { text: string; targetLocale: string; sourceLocale?: string }) =>
     request<TranslateResult>("/chat/translate", { method: "POST", body: input }),
+
+  authorizePusher: (socketId: string, channelName: string) => {
+    const form = new FormData();
+    form.append("socket_id", socketId);
+    form.append("channel_name", channelName);
+    return request<PusherAuthResult>("/pusher/auth", { method: "POST", body: form });
+  },
 
   uploadMedia: async (file: { uri: string; name: string; type: string }, kind: "image" | "voice") => {
     const form = new FormData();

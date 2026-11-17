@@ -12,11 +12,13 @@ export function ChatComposer({
   sending,
   placeholder = "Type a message…",
   disabled,
+  onChangeText,
 }: {
   onSend: (message: string) => void;
   sending?: boolean;
   placeholder?: string;
   disabled?: boolean;
+  onChangeText?: (text: string) => void;
 }) {
   const { palette } = useTheme();
   const [text, setText] = useState("");
@@ -42,7 +44,10 @@ export function ChatComposer({
       >
         <TextInput
           value={text}
-          onChangeText={setText}
+          onChangeText={(next) => {
+            setText(next);
+            onChangeText?.(next);
+          }}
           placeholder={placeholder}
           placeholderTextColor={palette.textFaint}
           multiline

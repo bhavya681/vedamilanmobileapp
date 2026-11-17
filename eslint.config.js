@@ -7,6 +7,15 @@ module.exports = defineConfig([
     ignores: ["dist/**", "node_modules/**", "coverage/**"],
   },
   {
+    rules: {
+      // React Native Text does not decode HTML entities, and Animated values
+      // intentionally live in refs. These web/compiler rules do not map to RN.
+      "react/no-unescaped-entities": "off",
+      "react-hooks/refs": "off",
+      "react-hooks/set-state-in-effect": "off",
+    },
+  },
+  {
     files: ["**/*.test.ts", "tests/**/*.ts"],
     languageOptions: {
       globals: {

@@ -9,7 +9,7 @@ import { ErrorState, LoadingState } from "@/components/ui/ScreenState";
 import { Screen } from "@/components/ui/Screen";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Text } from "@/components/ui/Text";
-import { useBilling, useCheckout } from "@/hooks/useBilling";
+import { useBilling, useCheckout, useInvoices } from "@/hooks/useBilling";
 import { useToast } from "@/components/feedback/ToastProvider";
 import { formatDate, formatInr, titleCase } from "@/lib/format";
 import { spacing } from "@/theme/tokens";
@@ -17,9 +17,11 @@ import { spacing } from "@/theme/tokens";
 export default function BillingScreen() {
   const toast = useToast();
   const billing = useBilling();
+  const invoices = useInvoices();
   const checkout = useCheckout();
   const summary = billing.data;
   const currentCode = summary?.subscription?.planCode;
+  const payments = invoices.data?.payments ?? summary?.payments ?? [];
 
   const startCheckout = async (planCode: string) => {
     try {
@@ -107,13 +109,16 @@ export default function BillingScreen() {
           </Card>
 
           <Card style={{ gap: spacing.sm }}>
-            <SectionHeader title="Payment history" />
-            {(summary?.payments ?? []).length === 0 ? (
+            <SectionHeader
+              title="Payment history"
+              subtitle={invoices.isFetching ? "Refreshing invoices…" : undefined}
+            />
+            {payments.length === 0 ? (
               <Text variant="caption" tone="faint">
                 No payments yet.
               </Text>
             ) : (
-              (summary?.payments ?? []).map((payment, index) => (
+              payments.map((payment, index) => (
                 <View key={payment.id ?? payment._id ?? index} style={{ flexDirection: "row", justifyContent: "space-between" }}>
                   <Text variant="small" tone="muted">
                     {formatDate(payment.createdAt)} · {titleCase(payment.status ?? "pending")}

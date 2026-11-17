@@ -1,5 +1,6 @@
 import { request } from "@/api/client/http";
 import type { BirthDetails, Preferences, Profile, ProfileBundle } from "@/api/types/models";
+import type { AppearancePreferences } from "@/theme/presets";
 
 export type ProfileUpdateInput = {
   name?: string;
@@ -39,16 +40,31 @@ export type BirthDetailsInput = Omit<BirthDetails, "ayanamsha" | "chartStylePref
   chartStylePreference?: "NORTH" | "SOUTH" | "EAST";
 };
 
-export type AppearancePrefs = Record<string, unknown>;
+export type AppearancePrefs = AppearancePreferences;
+
+export type AppLocale =
+  | "en"
+  | "hi"
+  | "sa"
+  | "mr"
+  | "es"
+  | "pt"
+  | "fr"
+  | "ar"
+  | "de"
+  | "bn"
+  | "ta";
+
+export type BillingCurrency = "INR" | "USD" | "EUR" | "GBP" | "AED" | "CAD" | "AUD" | "SGD";
 
 export type LocaleSettings = {
-  language: string;
+  language: AppLocale;
   region: string;
   timezone: string;
   dateFormat: "locale" | "DMY" | "MDY" | "YMD";
   timeFormat: "12h" | "24h";
-  currency: string;
-  aiLanguage: string | null;
+  currency: BillingCurrency;
+  aiLanguage: AppLocale | null;
 };
 
 export const profileApi = {
