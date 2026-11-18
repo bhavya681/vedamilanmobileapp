@@ -11,6 +11,8 @@ import { Card } from "@/components/ui/Card";
 import { ErrorState, InlineNotice, LoadingState } from "@/components/ui/ScreenState";
 import { Screen } from "@/components/ui/Screen";
 import { Text } from "@/components/ui/Text";
+import { SageAvatar } from "@/components/wisdom/SageAvatar";
+import { getSageImage } from "@/lib/sageImages";
 import { useTheme } from "@/theme/ThemeProvider";
 import { radii, spacing } from "@/theme/tokens";
 
@@ -70,22 +72,12 @@ export default function RishiSageDetailScreen() {
       <View style={{ gap: spacing.lg }}>
         <Card tone="gold" style={{ gap: spacing.md }}>
           <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.md }}>
-            <View
-              style={{
-                width: 58,
-                height: 58,
-                borderRadius: radii.xl,
-                alignItems: "center",
-                justifyContent: "center",
-                backgroundColor: `${palette.gold}24`,
-                borderWidth: 1,
-                borderColor: `${palette.gold}66`,
-              }}
-            >
-              <Text variant="serifLg" tone="gold">
-                {guide.monogram ?? guide.displayName.slice(0, 1)}
-              </Text>
-            </View>
+            <SageAvatar
+              uri={getSageImage(guide)}
+              label={guide.monogram ?? guide.displayName}
+              size={58}
+              rounded={radii.xl}
+            />
             <View style={{ flex: 1 }}>
               <Text variant="heading">{guide.displayName}</Text>
               <Text variant="small" tone="gold">

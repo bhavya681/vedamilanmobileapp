@@ -12,6 +12,8 @@ import { Chip } from "@/components/ui/Chip";
 import { EmptyState, ErrorState, LoadingState } from "@/components/ui/ScreenState";
 import { Screen } from "@/components/ui/Screen";
 import { Text } from "@/components/ui/Text";
+import { SageAvatar } from "@/components/wisdom/SageAvatar";
+import { COUNCIL_IMAGE, getSageImage } from "@/lib/sageImages";
 import { useTheme } from "@/theme/ThemeProvider";
 import { radii, spacing } from "@/theme/tokens";
 import { fontFamily } from "@/theme/typography";
@@ -81,18 +83,7 @@ export default function RishiSagesScreen() {
             borderColor: `${palette.gold}55`,
           }}
         >
-          <View
-            style={{
-              width: 42,
-              height: 42,
-              borderRadius: radii.pill,
-              alignItems: "center",
-              justifyContent: "center",
-              backgroundColor: `${palette.gold}22`,
-            }}
-          >
-            <Users size={19} color={palette.gold} />
-          </View>
+          <SageAvatar uri={COUNCIL_IMAGE} label="Council of Sages" size={42} rounded={radii.pill} />
           <View style={{ flex: 1 }}>
             <Text variant="label" tone="onAccent">
               Ask the Sages
@@ -219,22 +210,12 @@ export default function RishiSagesScreen() {
               }}
             >
               <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.md }}>
-                <View
-                  style={{
-                    width: 46,
-                    height: 46,
-                    borderRadius: radii.lg,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    backgroundColor: `${palette.gold}1F`,
-                    borderWidth: 1,
-                    borderColor: `${palette.gold}55`,
-                  }}
-                >
-                  <Text variant="label" tone="gold">
-                    {guide.monogram ?? guide.displayName.slice(0, 1)}
-                  </Text>
-                </View>
+                <SageAvatar
+                  uri={getSageImage(guide)}
+                  label={guide.monogram ?? guide.displayName}
+                  size={46}
+                  rounded={radii.lg}
+                />
                 <View style={{ flex: 1 }}>
                   <Text variant="label" numberOfLines={1}>
                     {guide.displayName}

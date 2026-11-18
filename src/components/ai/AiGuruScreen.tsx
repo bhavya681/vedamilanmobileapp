@@ -3,6 +3,7 @@ import React from "react";
 
 import { AgentChat } from "@/components/ai/AgentChat";
 import { Screen } from "@/components/ui/Screen";
+import { AI_GURU_IMAGE } from "@/lib/sageImages";
 
 export default function AiGuruScreen() {
   const router = useRouter();
@@ -23,6 +24,7 @@ export default function AiGuruScreen() {
           title: "AI Guru",
           tagline: "Chart-aware Vedic guidance",
           monogram: "AG",
+          avatarUri: AI_GURU_IMAGE,
           assistantLabel: "AI GURU",
           welcomeTitle: "Ask your AI Guru",
           welcomeBody:

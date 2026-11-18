@@ -12,8 +12,10 @@ import { ErrorState, LoadingState } from "@/components/ui/ScreenState";
 import { Screen } from "@/components/ui/Screen";
 import { Text } from "@/components/ui/Text";
 import { SageChat } from "@/components/wisdom/SageChat";
+import { SageAvatar } from "@/components/wisdom/SageAvatar";
+import { COUNCIL_IMAGE } from "@/lib/sageImages";
 import { useTheme } from "@/theme/ThemeProvider";
-import { spacing } from "@/theme/tokens";
+import { radii, spacing } from "@/theme/tokens";
 
 const FALLBACK_GUIDE_IDS = ["vasistha", "vishwamitra", "vyasa", "yajnavalkya"];
 
@@ -78,8 +80,8 @@ export default function AskTheSagesScreen() {
             borderBottomColor: palette.border,
           }}
         >
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-            <Users size={15} color={palette.gold} />
+          <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
+            <SageAvatar uri={COUNCIL_IMAGE} label="Council of Sages" size={28} rounded={radii.pill} />
             <Text variant="micro" tone="gold">
               COUNCIL MEMBERS · {finalGuideIds.length}
             </Text>

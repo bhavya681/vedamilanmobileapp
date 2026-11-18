@@ -10,6 +10,7 @@ import { Screen } from "@/components/ui/Screen";
 import { BottomSheet } from "@/components/ui/Sheet";
 import { ReportView } from "@/components/ReportView";
 import { DISCLAIMER } from "@/lib/constants";
+import { MARRIAGE_GURU_IMAGE } from "@/lib/sageImages";
 
 const DEFAULT_SUGGESTIONS = [
   "When is the strongest window for marriage in my chart?",
@@ -41,6 +42,7 @@ export default function MarriageGuruScreen() {
           title: "Marriage Guru",
           tagline: "Vedic relationship & timing guide",
           monogram: "MG",
+          avatarUri: MARRIAGE_GURU_IMAGE,
           assistantLabel: "MARRIAGE GURU",
           welcomeTitle: "Ask the Marriage Guru",
           welcomeBody:

@@ -20,6 +20,7 @@ import { ChatComposer } from "@/components/chat/ChatComposer";
 import { MessageBubble, type ChatBubbleMessage } from "@/components/chat/MessageBubble";
 import { useToast } from "@/components/feedback/ToastProvider";
 import { Text } from "@/components/ui/Text";
+import { SageAvatar } from "@/components/wisdom/SageAvatar";
 import { timeAgo } from "@/lib/format";
 import { useTheme } from "@/theme/ThemeProvider";
 import { radii, spacing } from "@/theme/tokens";
@@ -40,6 +41,7 @@ export type AgentChatIdentity = {
   title: string;
   tagline: string;
   monogram?: string;
+  avatarUri?: string;
   assistantLabel?: string;
   welcomeTitle?: string;
   welcomeBody?: string;
@@ -185,22 +187,12 @@ export function AgentChat({ agent, identity }: { agent: VedaAgentKey; identity: 
           borderBottomColor: palette.border,
         }}
       >
-        <View
-          style={{
-            width: compact ? 30 : 34,
-            height: compact ? 30 : 34,
-            borderRadius: radii.md,
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: `${palette.gold}1A`,
-            borderWidth: 1,
-            borderColor: `${palette.gold}4D`,
-          }}
-        >
-          <Text variant="micro" tone="gold" weight="semibold">
-            {identity.monogram ?? monogramFor(identity.title)}
-          </Text>
-        </View>
+        <SageAvatar
+          uri={identity.avatarUri}
+          label={identity.monogram ?? monogramFor(identity.title)}
+          size={compact ? 30 : 34}
+          rounded={radii.md}
+        />
         <View style={{ flex: 1, minWidth: 0 }}>
           <Text variant="label" numberOfLines={1}>
             {identity.title}
@@ -268,12 +260,22 @@ export function AgentChat({ agent, identity }: { agent: VedaAgentKey; identity: 
                 gap: spacing.sm,
               }}
             >
-              <Text variant="micro" tone="gold" style={{ letterSpacing: 1.4 }}>
-                {identity.title.toUpperCase()}
-              </Text>
-              <Text variant={compact ? "title" : "heading"}>
-                {identity.welcomeTitle ?? `Ask ${identity.title}`}
-              </Text>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.md }}>
+                <SageAvatar
+                  uri={identity.avatarUri}
+                  label={identity.monogram ?? monogramFor(identity.title)}
+                  size={compact ? 48 : 56}
+                  rounded={radii.lg}
+                />
+                <View style={{ flex: 1, gap: 2 }}>
+                  <Text variant="micro" tone="gold" style={{ letterSpacing: 1.4 }}>
+                    {identity.title.toUpperCase()}
+                  </Text>
+                  <Text variant={compact ? "title" : "heading"}>
+                    {identity.welcomeTitle ?? `Ask ${identity.title}`}
+                  </Text>
+                </View>
+              </View>
               <Text variant="small" tone="muted">
                 {identity.welcomeBody ??
                   "Ask about your chart, dasha, yogas, or transits in plain language."}

@@ -5,12 +5,12 @@ import {
   CalendarDays,
   Calculator,
   ChevronRight,
+  Clapperboard,
   Compass,
   HeartHandshake,
   Mic,
   Search,
   Sparkles,
-  Star,
   TrendingUp,
   Users,
   Bell,
@@ -46,7 +46,7 @@ const EXPLORE = [
   { icon: Sparkles, label: "Rishi & Sages", route: "/(app)/rishi-sages" as const },
   { icon: TrendingUp, label: "Life calendar", route: "/(app)/calendar" as const },
   { icon: Mic, label: "Consult", route: "/(app)/consultations" as const },
-  { icon: Star, label: "Celebrities", route: "/(app)/celebrities" as const },
+  { icon: Clapperboard, label: "Celebrities", route: "/(app)/celebrities" as const },
 ];
 
 const GUIDANCE = [

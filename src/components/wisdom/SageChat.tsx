@@ -5,7 +5,6 @@ import {
   BookmarkPlus,
   Check,
   RotateCcw,
-  Sparkles,
   Volume2,
   VolumeX,
 } from "lucide-react-native";
@@ -30,6 +29,8 @@ import { useToast } from "@/components/feedback/ToastProvider";
 import { Card } from "@/components/ui/Card";
 import { ErrorState, LoadingState } from "@/components/ui/ScreenState";
 import { Text } from "@/components/ui/Text";
+import { SageAvatar } from "@/components/wisdom/SageAvatar";
+import { COUNCIL_IMAGE, getSageImage } from "@/lib/sageImages";
 import { timeAgo } from "@/lib/format";
 import { useTheme } from "@/theme/ThemeProvider";
 import { radii, spacing } from "@/theme/tokens";
@@ -249,20 +250,12 @@ export function SageChat({
           borderBottomColor: palette.border,
         }}
       >
-        <View
-          style={{
-            width: 36,
-            height: 36,
-            borderRadius: radii.pill,
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: `${palette.gold}1F`,
-            borderWidth: 1,
-            borderColor: `${palette.gold}55`,
-          }}
-        >
-          <Sparkles size={17} color={palette.gold} />
-        </View>
+        <SageAvatar
+          uri={council ? COUNCIL_IMAGE : getSageImage({ id: guideId, displayName: guideName ?? identity.title })}
+          label={council ? "Council of Sages" : identity.title}
+          size={36}
+          rounded={radii.pill}
+        />
         <View style={{ flex: 1 }}>
           <Text variant="label" numberOfLines={1}>
             {identity.title}
