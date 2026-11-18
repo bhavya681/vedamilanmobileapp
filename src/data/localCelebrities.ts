@@ -1,0 +1,51 @@
+import type { Celebration } from "@/api/types/models";
+
+export const LOCAL_CELEBRITIES: Celebration[] = [
+  {
+    id: "local-eshaan-mahesh",
+    name: "Eshaan Mahesh",
+    category: "Creator",
+    field: "Digital creator",
+    note: "Featured chart profile.",
+  },
+  {
+    id: "local-guru-tatva-guru",
+    name: "Guru Tatva Guru",
+    category: "Spiritual",
+    field: "Spiritual teacher",
+    note: "Featured chart profile.",
+  },
+  {
+    id: "local-adolf-hitler",
+    name: "Adolf Hitler",
+    category: "Historical",
+    field: "Historical figure",
+    birthDate: "1889-04-20",
+    place: "Braunau am Inn, Austria",
+    timeAccuracy: "unknown",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Hitler_portrait_crop.jpg/240px-Hitler_portrait_crop.jpg",
+    note: "Birth details from public historical records; chart shown for study.",
+  },
+  {
+    id: "local-tony-ferguson",
+    name: "Tony Ferguson",
+    category: "Sports",
+    field: "MMA fighter",
+    birthDate: "1984-02-12",
+    place: "Oxnard, California, USA",
+    timeAccuracy: "unknown",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Tony_Ferguson_2019.jpg/240px-Tony_Ferguson_2019.jpg",
+    note: "Birth details from public records; chart shown for study.",
+  },
+  {
+    id: "local-charles-oliveira",
+    name: "Charles Oliveira",
+    category: "Sports",
+    field: "MMA fighter",
+    birthDate: "1989-10-17",
+    place: "Guarujá, São Paulo, Brazil",
+    timeAccuracy: "unknown",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Charles_Oliveira_2021.png/240px-Charles_Oliveira_2021.png",
+    note: "Birth details from public records; chart shown for study.",
+  },
+];
