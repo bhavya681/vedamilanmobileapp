@@ -35,7 +35,7 @@ export default function SettingsScreen() {
         text: "Sign out",
         style: "destructive",
         onPress: () => {
-          void signOut();
+          void signOut().then(() => router.replace("/(auth)/welcome"));
         },
       },
     ]);

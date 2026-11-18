@@ -18,7 +18,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useQuery } from "@tanstack/react-query";
 import { matchmakingApi } from "@/api/endpoints/matchmaking";
-import { queryKeys } from "@/api/queryKeys";
 import { Avatar } from "@/components/ui/Avatar";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -54,12 +53,9 @@ function greeting(): string {
   return "Good evening";
 }
 
-const ON_DARK = "#F7F3E9";
-const GOLD_ON_DARK = "#E8CE8B";
-
 export default function HomeScreen() {
   const router = useRouter();
-  const { palette, scheme } = useTheme();
+  const { palette } = useTheme();
   const { user } = useSession();
   const bundle = useProfileBundle();
   const birth = bundle.data?.birthDetails ?? null;
@@ -73,7 +69,6 @@ export default function HomeScreen() {
   });
 
   const profile = bundle.data?.profile;
-  const completion = profile?.completion?.score ?? profile?.profileCompletion ?? 0;
   const photo = profile?.photos?.find((p) => p.isPrimary)?.secureUrl ?? profile?.photos?.[0]?.secureUrl;
   const recs = (recommendations.data?.recommendations ?? recommendations.data?.items ?? []).slice(0, 6);
   const horoscope = kundli.payload?.horoscope;
@@ -130,10 +125,10 @@ export default function HomeScreen() {
             <View style={{ padding: spacing.xl, position: "relative" }}>
               <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" }}>
                 <View>
-                  <Text variant="micro" style={{ color: GOLD_ON_DARK, letterSpacing: 1.6 }}>
+                  <Text variant="micro" style={{ color: palette.gold, letterSpacing: 1.6 }}>
                     YOUR VEDIC SNAPSHOT
                   </Text>
-                  <Text variant="display" numberOfLines={1} weight="semibold" style={{ color: ON_DARK, marginTop: 4 }}>
+                  <Text variant="display" numberOfLines={1} weight="semibold" style={{ color: palette.inverseSurface, marginTop: 4 }}>
                     {horoscope ? horoscope.lagnaSign : "—"}
                   </Text>
                   <Text variant="caption" style={{ color: "rgba(247,243,233,0.72)", marginTop: 2 }}>
@@ -153,7 +148,7 @@ export default function HomeScreen() {
 
               {kundli.isLoading ? (
                 <View style={{ marginTop: spacing.lg, alignItems: "center" }}>
-                  <ActivityIndicator color={GOLD_ON_DARK} style={{ marginTop: spacing.sm }} />
+                  <ActivityIndicator color={palette.gold} style={{ marginTop: spacing.sm }} />
                   <Text variant="small" style={{ color: "rgba(247,243,233,0.78)", marginTop: spacing.sm }}>
                     Calculating planetary positions…
                   </Text>
@@ -190,7 +185,7 @@ export default function HomeScreen() {
                       label="Ask the Guide"
                       variant="ghost"
                       size="sm"
-                      textColor={GOLD_ON_DARK}
+                      textColor={palette.gold}
                       onPress={() => router.push("/(tabs)/ai")}
                       style={{ flex: 1 }}
                     />
@@ -393,12 +388,13 @@ export default function HomeScreen() {
 }
 
 function MiniStat({ label, value }: { label: string; value: string }) {
+  const { palette } = useTheme();
   return (
     <View style={{ flex: 1 }}>
-      <Text variant="micro" style={{ color: GOLD_ON_DARK, textAlign: "center" }}>
+      <Text variant="micro" style={{ color: palette.gold, textAlign: "center" }}>
         {label.toUpperCase()}
       </Text>
-      <Text variant="title" numberOfLines={1} style={{ color: ON_DARK, textAlign: "center" }}>
+      <Text variant="title" numberOfLines={1} style={{ color: palette.inverseSurface, textAlign: "center" }}>
         {value}
       </Text>
     </View>

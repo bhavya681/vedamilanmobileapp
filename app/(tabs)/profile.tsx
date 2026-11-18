@@ -54,11 +54,11 @@ export default function ProfileScreen() {
     billing.data?.plans.find((p) => p.code === subscription?.planCode)?.name ??
     (subscription?.planCode ? titleCase(String(subscription.planCode)) : "Free member");
 
-  const groups: Array<{
+  const groups: {
     title: string;
     icon: React.ReactNode;
-    rows: Array<{ title: string; subtitle?: string; icon: React.ReactNode; route: string }>;
-  }> = [
+    rows: { title: string; subtitle?: string; icon: React.ReactNode; route: string }[];
+  }[] = [
     {
       title: "Profile",
       icon: <UserRound size={16} color={palette.gold} />,

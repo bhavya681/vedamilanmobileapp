@@ -1,10 +1,11 @@
 import { useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
-import React from "react";
+import React, { useState } from "react";
 import { View } from "react-native";
 
 import { wisdomApi } from "@/api/endpoints/wisdom";
 import { Card } from "@/components/ui/Card";
+import { Chip } from "@/components/ui/Chip";
 import { ErrorState, LoadingState } from "@/components/ui/ScreenState";
 import { Screen } from "@/components/ui/Screen";
 import { SectionHeader } from "@/components/ui/SectionHeader";
@@ -14,8 +15,15 @@ import { spacing } from "@/theme/tokens";
 
 export default function WisdomScreen() {
   const router = useRouter();
+  const [category, setCategory] = useState<string | null>(null);
   const query = useQuery({ queryKey: ["wisdom"], queryFn: () => wisdomApi.getLibrary() });
   const bundle = (query.data ?? {}) as WisdomBundle;
+  const categories = bundle.categories ?? [];
+  const guides = (bundle.guides ?? []).filter((guide) => {
+    if (!category) return true;
+    const selected = categories.find((item) => item.id === category);
+    return guide.category === category || (selected ? guide.category === selected.name : false);
+  });
 
   return (
     <Screen title="Wisdom" subtitle="Timeless guidance for modern relationships" showBack>
@@ -41,7 +49,20 @@ export default function WisdomScreen() {
 
           <Card style={{ gap: spacing.sm }}>
             <SectionHeader title="Guides" subtitle="Choose a voice to explore" />
-            {(bundle.guides ?? []).map((guide) => (
+            {categories.length ? (
+              <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm }}>
+                <Chip label="All" selected={!category} onPress={() => setCategory(null)} />
+                {categories.map((item) => (
+                  <Chip
+                    key={item.id}
+                    label={item.name}
+                    selected={category === item.id}
+                    onPress={() => setCategory(item.id)}
+                  />
+                ))}
+              </View>
+            ) : null}
+            {guides.map((guide) => (
               <Card
                 key={guide.id}
                 onPress={() => router.push(`/(app)/wisdom/${guide.id}`)}
@@ -53,23 +74,12 @@ export default function WisdomScreen() {
                 </Text>
               </Card>
             ))}
-            {!(bundle.guides ?? []).length ? (
+            {!guides.length ? (
               <Text variant="caption" tone="faint">
-                No guides available right now.
+                {category ? "No guides in this theme yet." : "No guides available right now."}
               </Text>
             ) : null}
           </Card>
-
-          {(bundle.categories ?? []).length ? (
-            <Card style={{ gap: spacing.sm }}>
-              <SectionHeader title="Explore by theme" />
-              {(bundle.categories ?? []).map((category) => (
-                <Text key={category.id} variant="small" tone="muted">
-                  {category.name}
-                </Text>
-              ))}
-            </Card>
-          ) : null}
 
           {bundle.disclaimer ? (
             <Text variant="caption" tone="faint">

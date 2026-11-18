@@ -307,6 +307,20 @@ export default function KundliScreen() {
             ))}
           </View>
 
+          <View style={{ gap: spacing.sm }}>
+            <SectionHeader title="Full reports" subtitle="Detailed views of your chart readings" />
+            <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm }}>
+              {[
+                ["Full chart", "/(app)/charts"],
+                ["Dasha detail", "/(app)/dasha"],
+                ["Yoga detail", "/(app)/yogas"],
+                ["Written horoscope", "/(app)/horoscope"],
+              ].map(([label, href]) => (
+                <Chip key={label} label={label ?? ""} onPress={() => router.push(href as never)} />
+              ))}
+            </View>
+          </View>
+
           <InlineNotice body={DISCLAIMER} />
         </View>
       </ScrollView>

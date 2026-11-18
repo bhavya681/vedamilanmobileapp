@@ -1,7 +1,7 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ChevronLeft, Lightbulb, MessageCircle, Sparkles } from "lucide-react-native";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -15,13 +15,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { errorMessage } from "@/api/client/errors";
 import { aiApi, type VedaAgentKey } from "@/api/endpoints/ai";
 import { queryKeys } from "@/api/queryKeys";
-import type { AiReply } from "@/api/types/models";
+import type { AiConversation, AiReply } from "@/api/types/models";
 import { ChatComposer } from "@/components/chat/ChatComposer";
 import { MessageBubble, type ChatBubbleMessage } from "@/components/chat/MessageBubble";
 import { Card } from "@/components/ui/Card";
 import { Text } from "@/components/ui/Text";
 import { useToast } from "@/components/feedback/ToastProvider";
 import { AI_AGENTS } from "@/lib/constants";
+import { timeAgo } from "@/lib/format";
 import { useTheme } from "@/theme/ThemeProvider";
 import { radii, spacing } from "@/theme/tokens";
 
@@ -120,34 +121,70 @@ export default function AiScreen() {
   const { palette } = useTheme();
   const toast = useToast();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { agent: agentParam } = useLocalSearchParams<{ agent?: string }>();
   const initialAgent = AI_AGENTS.find((item) => item.key === agentParam) ?? null;
   const [agent, setAgent] = useState<(typeof AI_AGENTS)[number] | null>(initialAgent);
   const [messages, setMessages] = useState<ChatBubbleMessage[]>([]);
   const [conversationId, setConversationId] = useState<string | undefined>();
   const scrollRef = useRef<React.ComponentRef<typeof ScrollView>>(null);
-  const handledParamRef = useRef<string | undefined>(agentParam);
+  const handledParamRef = useRef<string | undefined>(undefined);
+
+  const conversations = useQuery({
+    queryKey: queryKeys.ai.conversations(),
+    queryFn: () => aiApi.listConversations(),
+    staleTime: 60_000,
+  });
+
+  const messagesFromConversation = useCallback(
+    (item: AiConversation): ChatBubbleMessage[] =>
+      (item.messages ?? [])
+        .filter((entry) => entry.role === "user" || entry.role === "assistant")
+        .map((entry, index) => ({
+          id: `${item.id || item._id || "conv"}-${index}`,
+          role: entry.role as "user" | "assistant",
+          content: (entry.content ?? entry.text ?? "").trim(),
+          createdAt: entry.createdAt,
+        }))
+        .filter((entry) => entry.content.length > 0),
+    [],
+  );
+
+  const openConversation = useCallback(
+    (item: AiConversation) => {
+      const found = AI_AGENTS.find((entry) => entry.key === item.agent) ?? AI_AGENTS[0]!;
+      setAgent(found);
+      setConversationId(item.id || undefined);
+      setMessages(messagesFromConversation(item));
+      setTimeout(() => scrollRef.current?.scrollToEnd({ animated: false }), 100);
+    },
+    [messagesFromConversation],
+  );
+
+  const startAgent = useCallback(
+    (item: (typeof AI_AGENTS)[number]) => {
+      const latest = conversations.data?.conversations?.find((entry) => entry.agent === item.key);
+      if (latest) {
+        openConversation(latest);
+        return;
+      }
+      setAgent(item);
+      setConversationId(undefined);
+      setMessages([]);
+    },
+    [conversations.data, openConversation],
+  );
 
   useEffect(() => {
     if (!agentParam) {
       handledParamRef.current = undefined;
       return;
     }
-    if (agentParam === handledParamRef.current) return;
+    if (handledParamRef.current === agentParam || conversations.isLoading) return;
     handledParamRef.current = agentParam;
     const found = AI_AGENTS.find((item) => item.key === agentParam);
-    if (found) {
-      setAgent(found);
-      setMessages([]);
-      setConversationId(undefined);
-    }
-  }, [agentParam]);
-
-  const conversations = useQuery({
-    queryKey: queryKeys.ai.conversations(agent?.key),
-    queryFn: () => aiApi.listConversations(agent?.key as VedaAgentKey | undefined),
-    enabled: Boolean(agent),
-  });
+    if (found) startAgent(found);
+  }, [agentParam, conversations.isLoading, startAgent]);
 
   const insights = useQuery({
     queryKey: queryKeys.ai.insights,
@@ -172,6 +209,7 @@ export default function AiScreen() {
           content: answer || "I could not form a reply. Please try again.",
         },
       ]);
+      void queryClient.invalidateQueries({ queryKey: queryKeys.ai.conversations() });
       setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 100);
     },
     onError: (error) => toast.show(errorMessage(error), "error"),
@@ -202,6 +240,38 @@ export default function AiScreen() {
           <Text variant="body" tone="muted" style={{ marginTop: spacing.sm }}>
             Chat with AI gurus for chart-aware guidance. Each guide explains insights in plain, reflective language.
           </Text>
+
+          {conversations.data?.conversations?.length ? (
+            <View style={{ gap: spacing.sm, marginTop: spacing.lg }}>
+              <Text variant="micro" tone="faint">
+                RECENT CONVERSATIONS
+              </Text>
+              {conversations.data.conversations.map((item) => {
+                const agentForItem = AI_AGENTS.find((entry) => entry.key === item.agent);
+                return (
+                  <Card
+                    key={item.id}
+                    onPress={() => openConversation(item)}
+                    accessibilityLabel={`Continue ${item.title ?? agentForItem?.title ?? "conversation"}`}
+                    style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: spacing.md }}
+                  >
+                    <View style={{ flex: 1, gap: 2 }}>
+                      <Text variant="body" weight="semibold" numberOfLines={1}>
+                        {item.title ?? agentForItem?.title ?? "Conversation"}
+                      </Text>
+                      <Text variant="caption" tone="faint">
+                        {agentForItem?.title ?? "AI Guide"}
+                        {item.updatedAt ? ` · ${timeAgo(item.updatedAt)}` : ""}
+                      </Text>
+                    </View>
+                    <Text variant="caption" tone="gold">
+                      Continue
+                    </Text>
+                  </Card>
+                );
+              })}
+            </View>
+          ) : null}
 
           <View style={{ gap: spacing.md, marginTop: spacing.xl }}>
             <Card onPress={() => router.push("/(app)/insights")} style={{ gap: spacing.xs }}>
@@ -247,7 +317,7 @@ export default function AiScreen() {
             {AI_AGENTS.map((item) => (
               <Card
                 key={item.key}
-                onPress={() => setAgent(item)}
+                onPress={() => startAgent(item)}
                 accessibilityLabel={`Chat with ${item.title}`}
                 style={{ flexDirection: "row", alignItems: "center", gap: spacing.md, paddingVertical: spacing.md }}
               >
@@ -342,7 +412,7 @@ export default function AiScreen() {
 
         <ScrollView
           ref={scrollRef}
-          contentContainerStyle={{ padding: spacing.xl, paddingBottom: spacing.lg }}
+          contentContainerStyle={{ padding: spacing.xl, paddingBottom: spacing.lg, gap: spacing.md }}
           onContentSizeChange={() => scrollRef.current?.scrollToEnd({ animated: false })}
         >
           {messages.length === 0 ? (

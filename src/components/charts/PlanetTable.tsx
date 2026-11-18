@@ -2,8 +2,7 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 
 import { Text } from "@/components/ui/Text";
-import { SIGNS } from "@/lib/constants";
-import { GRAHA_LABELS } from "@/lib/constants";
+import { GRAHA_LABELS, SIGNS } from "@/lib/constants";
 import { useTheme } from "@/theme/ThemeProvider";
 import { spacing } from "@/theme/tokens";
 import type { ChartPlanetGlyph } from "./types";

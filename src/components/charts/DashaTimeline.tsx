@@ -9,8 +9,8 @@ import { spacing } from "@/theme/tokens";
 import { formatDate } from "@/lib/format";
 import type { DashaPeriod } from "@/api/types/models";
 
-function withIndices(periods: DashaPeriod[], depth = 0): Array<{ period: DashaPeriod; depth: number; key: string }> {
-  const out: Array<{ period: DashaPeriod; depth: number; key: string }> = [];
+function withIndices(periods: DashaPeriod[], depth = 0): { period: DashaPeriod; depth: number; key: string }[] {
+  const out: { period: DashaPeriod; depth: number; key: string }[] = [];
   periods.forEach((period, index) => {
     const key = `${depth}-${index}-${period.lord ?? period.planet ?? ""}`;
     out.push({ period, depth, key });

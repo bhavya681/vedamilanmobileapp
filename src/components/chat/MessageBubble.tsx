@@ -1,3 +1,4 @@
+import { Image } from "expo-image";
 import React from "react";
 import { Pressable, View } from "react-native";
 
@@ -13,6 +14,7 @@ export type ChatBubbleMessage = {
   content: string;
   createdAt?: string;
   translated?: string;
+  mediaUrl?: string;
 };
 
 export function MessageBubble({
@@ -54,13 +56,29 @@ export function MessageBubble({
         paddingVertical: spacing.sm + 4,
       }}
     >
-      {isUser ? (
-        <Text variant="small" style={{ color: textColor, lineHeight: 22 }} selectable>
-          {message.content}
-        </Text>
-      ) : (
-        <MarkdownText content={message.content} color={textColor} />
-      )}
+      {message.mediaUrl ? (
+        <Image
+          source={message.mediaUrl}
+          style={{
+            width: 240,
+            height: 180,
+            borderRadius: radii.lg,
+            marginBottom: message.content ? spacing.sm : 0,
+            backgroundColor: palette.sunken,
+          }}
+          contentFit="cover"
+          accessibilityLabel="Shared image"
+        />
+      ) : null}
+      {message.content ? (
+        isUser ? (
+          <Text variant="small" style={{ color: textColor, lineHeight: 22 }} selectable>
+            {message.content}
+          </Text>
+        ) : (
+          <MarkdownText content={message.content} color={textColor} />
+        )
+      ) : null}
       {message.translated ? (
         <View style={{ marginTop: spacing.sm, paddingTop: spacing.sm, borderTopWidth: 1, borderTopColor: `${textColor}33` }}>
           <Text variant="micro" style={{ color: textColor, opacity: 0.7, letterSpacing: 0.8 }}>

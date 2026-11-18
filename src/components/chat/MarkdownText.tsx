@@ -3,7 +3,7 @@ import { View } from "react-native";
 
 import { Text } from "@/components/ui/Text";
 import { useTheme } from "@/theme/ThemeProvider";
-import { radii, spacing } from "@/theme/tokens";
+import { spacing } from "@/theme/tokens";
 
 type Props = {
   content: string;

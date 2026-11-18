@@ -1,4 +1,4 @@
-import { SendHorizontal } from "lucide-react-native";
+import { Paperclip, SendHorizontal } from "lucide-react-native";
 import React, { useState } from "react";
 import { ActivityIndicator, Pressable, StyleSheet, TextInput, View } from "react-native";
 import * as Haptics from "expo-haptics";
@@ -13,12 +13,16 @@ export function ChatComposer({
   placeholder = "Type a message…",
   disabled,
   onChangeText,
+  onAttach,
+  attaching,
 }: {
   onSend: (message: string) => void;
   sending?: boolean;
   placeholder?: string;
   disabled?: boolean;
   onChangeText?: (text: string) => void;
+  onAttach?: () => void;
+  attaching?: boolean;
 }) {
   const { palette } = useTheme();
   const [text, setText] = useState("");
@@ -42,6 +46,26 @@ export function ChatComposer({
           },
         ]}
       >
+        {onAttach ? (
+          <Pressable
+            onPress={onAttach}
+            disabled={disabled || attaching}
+            accessibilityRole="button"
+            accessibilityLabel="Attach an image"
+            accessibilityState={{ disabled: disabled || attaching }}
+            hitSlop={6}
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: 18,
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: palette.sunken,
+            }}
+          >
+            <Paperclip size={17} color={palette.textMuted} />
+          </Pressable>
+        ) : null}
         <TextInput
           value={text}
           onChangeText={(next) => {

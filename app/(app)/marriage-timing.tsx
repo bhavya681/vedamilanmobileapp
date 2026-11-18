@@ -3,10 +3,9 @@ import React from "react";
 import { View } from "react-native";
 
 import { Button } from "@/components/ui/Button";
-import { ErrorState, LoadingState } from "@/components/ui/ScreenState";
+import { ErrorState, InlineNotice, LoadingState } from "@/components/ui/ScreenState";
 import { ReportView } from "@/components/ReportView";
 import { Screen } from "@/components/ui/Screen";
-import { InlineNotice } from "@/components/ui/ScreenState";
 import { useMarriageTiming } from "@/hooks/useAstrology";
 import { DISCLAIMER } from "@/lib/constants";
 import { spacing } from "@/theme/tokens";

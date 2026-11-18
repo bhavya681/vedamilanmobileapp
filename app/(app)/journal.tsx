@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import { View } from "react-native";
@@ -11,6 +12,7 @@ import { formatDate } from "@/lib/format";
 import { spacing } from "@/theme/tokens";
 
 export default function JournalScreen() {
+  const router = useRouter();
   const query = useQuery({ queryKey: ["journal"], queryFn: () => wisdomApi.journal.list() });
   const entries = query.data?.entries ?? [];
 
@@ -21,7 +23,12 @@ export default function JournalScreen() {
       ) : query.isError ? (
         <ErrorState error={query.error} onRetry={() => query.refetch()} />
       ) : entries.length === 0 ? (
-        <EmptyState title="Your journal is empty" body="Save insights from Wisdom guides and AI conversations to see them here." />
+        <EmptyState
+          title="Your journal is empty"
+          body="Save insights from Wisdom guides to see them here."
+          actionLabel="Explore wisdom"
+          onAction={() => router.push("/(app)/wisdom")}
+        />
       ) : (
         <View style={{ gap: spacing.md }}>
           {entries.map((entry, index) => (

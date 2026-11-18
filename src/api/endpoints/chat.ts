@@ -89,9 +89,12 @@ export const chatApi = {
     const form = new FormData();
     form.append("kind", kind);
     form.append("file", file as unknown as Blob);
-    return uploadRequest<{ url?: string; secureUrl?: string; publicId?: string }>(
-      "/chats/media",
-      form,
-    );
+    return uploadRequest<{
+      url?: string;
+      secureUrl?: string;
+      publicId?: string;
+      resourceType?: string;
+      duration?: number | null;
+    }>("/chats/media", form);
   },
 };

@@ -1,3 +1,5 @@
+import type { KundliChart, NorthChartData } from "@/api/types/models";
+
 export type {
   ChartPlanetGlyph,
   KundliChart as ChartData,
@@ -5,8 +7,6 @@ export type {
   SouthChartData,
   SouthSignRow,
 } from "@/api/types/models";
-
-import type { KundliChart, NorthChartData } from "@/api/types/models";
 
 export function isNorthChart(data: KundliChart): data is NorthChartData {
   return data.style === "NORTH";

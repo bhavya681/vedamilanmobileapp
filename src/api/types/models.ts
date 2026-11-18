@@ -151,7 +151,7 @@ export type DoshaItem = {
 export type HouseChartHouse = {
   house?: number;
   sign?: string;
-  planets?: string[] | Array<{ planet: string; degree?: number; retrograde?: boolean }>;
+  planets?: string[] | { planet: string; degree?: number; retrograde?: boolean }[];
 };
 
 export type ChartData = {
@@ -267,7 +267,7 @@ export type VedicExtras = {
     moon?: KundliChart;
     sun?: KundliChart;
     navamsa?: KundliChart;
-    catalog?: Array<{ id: string; code: string; name: string; theme?: string }>;
+    catalog?: { id: string; code: string; name: string; theme?: string }[];
     vargas?: Record<string, KundliChart>;
   };
 };
@@ -399,11 +399,20 @@ export type AiReply = {
   [key: string]: unknown;
 };
 
+export type AiConversationMessage = {
+  role: "user" | "assistant" | "system" | "tool";
+  content?: string;
+  text?: string;
+  createdAt?: string;
+};
+
 export type AiConversation = {
   id: string;
+  _id?: string;
   agent?: string;
   title?: string;
   updatedAt?: string;
+  messages?: AiConversationMessage[];
 };
 
 export type NotificationItem = {
@@ -415,6 +424,8 @@ export type NotificationItem = {
   type?: string;
   read?: boolean;
   isRead?: boolean;
+  readAt?: string | null;
+  data?: Record<string, unknown> | null;
   createdAt?: string;
 };
 
@@ -470,12 +481,12 @@ export type Celebration = {
 };
 
 export type WisdomBundle = {
-  categories?: Array<{ id: string; name: string; description?: string }>;
-  guides?: Array<{ id: string; name: string; category?: string; summary?: string; [key: string]: unknown }>;
-  featuredSages?: Array<{ id: string; name: string; [key: string]: unknown }>;
-  relationshipGuides?: Array<{ id: string; name: string; [key: string]: unknown }>;
+  categories?: { id: string; name: string; description?: string }[];
+  guides?: { id: string; name: string; category?: string; summary?: string; [key: string]: unknown }[];
+  featuredSages?: { id: string; name: string; [key: string]: unknown }[];
+  relationshipGuides?: { id: string; name: string; [key: string]: unknown }[];
   daily?: { title?: string; body?: string; [key: string]: unknown };
-  needs?: Array<{ id: string; label?: string; [key: string]: unknown }>;
+  needs?: { id: string; label?: string; [key: string]: unknown }[];
   alignment?: unknown;
   disclaimer?: string;
 };

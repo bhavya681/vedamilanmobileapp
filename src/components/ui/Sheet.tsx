@@ -1,3 +1,4 @@
+import { X } from "lucide-react-native";
 import React from "react";
 import { Modal, Pressable, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -28,8 +29,8 @@ export function BottomSheet({
         <Pressable
           style={[StyleSheet.absoluteFill, { backgroundColor: palette.overlay }]}
           onPress={dismissable ? onClose : undefined}
-          accessibilityLabel="Close"
-          accessibilityRole="button"
+          accessibilityLabel={dismissable ? "Close" : undefined}
+          accessibilityRole={dismissable ? "button" : undefined}
         />
         <View
           style={{
@@ -52,11 +53,31 @@ export function BottomSheet({
               marginBottom: spacing.lg,
             }}
           />
-          {title ? (
-            <Text variant="title" style={{ marginBottom: spacing.lg }}>
-              {title}
-            </Text>
-          ) : null}
+          <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.md, marginBottom: spacing.lg }}>
+            <View style={{ flex: 1 }}>
+              {title ? <Text variant="title">{title}</Text> : null}
+            </View>
+            {dismissable ? (
+              <Pressable
+                onPress={onClose}
+                accessibilityRole="button"
+                accessibilityLabel="Close sheet"
+                hitSlop={10}
+                style={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: radii.pill,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backgroundColor: palette.raised,
+                  borderWidth: 1,
+                  borderColor: palette.border,
+                }}
+              >
+                <X size={18} color={palette.textMuted} />
+              </Pressable>
+            ) : null}
+          </View>
           {children}
         </View>
       </View>

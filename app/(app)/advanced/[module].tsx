@@ -1,12 +1,10 @@
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
 import { View } from "react-native";
 
-import { EmptyState } from "@/components/ui/ScreenState";
+import { EmptyState, ErrorState, InlineNotice, LoadingState } from "@/components/ui/ScreenState";
 import { Screen } from "@/components/ui/Screen";
 import { ReportView } from "@/components/ReportView";
-import { InlineNotice, ErrorState, LoadingState } from "@/components/ui/ScreenState";
-import { Text } from "@/components/ui/Text";
 import { useAstrologyModule, type AstrologyModule } from "@/hooks/useAstrology";
 import { DISCLAIMER } from "@/lib/constants";
 import { titleCase } from "@/lib/format";
@@ -24,6 +22,7 @@ const MODULES: Record<string, { title: string; subtitle?: string }> = {
 };
 
 export default function AdvancedModuleScreen() {
+  const router = useRouter();
   const params = useLocalSearchParams<{ module?: string }>();
   const key = params.module ?? "";
   const meta = MODULES[key];
@@ -33,7 +32,12 @@ export default function AdvancedModuleScreen() {
   if (!valid || !meta) {
     return (
       <Screen title="Advanced report" showBack>
-        <EmptyState title="Report not found" body="Choose a report from the advanced reports list." />
+        <EmptyState
+          title="Report not found"
+          body="Choose a report from the advanced reports list."
+          actionLabel="Browse advanced reports"
+          onAction={() => router.replace("/(app)/advanced")}
+        />
       </Screen>
     );
   }

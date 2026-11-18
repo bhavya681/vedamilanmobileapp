@@ -12,7 +12,6 @@ import { InlineNotice } from "@/components/ui/ScreenState";
 import { Text } from "@/components/ui/Text";
 import { useResetPassword } from "@/hooks/useAuthActions";
 import { resetSchema, type ResetValues } from "@/lib/validation";
-import { spacing } from "@/theme/tokens";
 
 export default function ResetPasswordScreen() {
   const router = useRouter();

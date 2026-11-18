@@ -25,6 +25,7 @@
     },
     "android": {
       "package": "ai.vedamilan.app",
+      "softwareKeyboardLayoutMode": "resize",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0C0A08"

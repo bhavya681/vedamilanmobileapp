@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import { Check } from "lucide-react-native";
-import React from "react";
+import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Pressable, View } from "react-native";
 
@@ -26,7 +26,6 @@ export default function RegisterScreen() {
     control,
     handleSubmit,
     setValue,
-    watch,
     formState: { errors, isSubmitting },
   } = useForm<RegisterValues>({
     resolver: zodResolver(registerSchema),
@@ -40,7 +39,7 @@ export default function RegisterScreen() {
     },
   });
 
-  const accepted = watch("acceptedTerms");
+  const [accepted, setAccepted] = useState(false);
 
   const onSubmit = handleSubmit(async (values) => {
     try {
@@ -170,11 +169,15 @@ export default function RegisterScreen() {
       />
 
       <Pressable
-        onPress={() => setValue("acceptedTerms", (!accepted) as true, { shouldValidate: true })}
+        onPress={() => {
+          setAccepted(!accepted);
+          setValue("acceptedTerms", (!accepted) as true, { shouldValidate: true });
+        }}
         accessibilityRole="checkbox"
-        accessibilityState={{ checked: Boolean(accepted) }}
+        accessibilityState={{ checked: accepted }}
         accessibilityLabel="Accept terms and privacy policy"
-        style={{ flexDirection: "row", gap: spacing.md, alignItems: "flex-start" }}
+        hitSlop={6}
+        style={{ flexDirection: "row", gap: spacing.md, alignItems: "center" }}
       >
         <View
           style={{
@@ -186,31 +189,32 @@ export default function RegisterScreen() {
             backgroundColor: accepted ? palette.gold : "transparent",
             alignItems: "center",
             justifyContent: "center",
-            marginTop: 1,
           }}
         >
           {accepted ? <Check size={14} color={palette.onAccent} /> : null}
         </View>
-        <Text variant="small" tone="muted" style={{ flex: 1 }}>
-          I agree to the{" "}
-          <Text
-            variant="small"
-            tone="gold"
-            onPress={() => void WebBrowser.openBrowserAsync(`${WEB_URL}/terms`)}
-          >
-            Terms of Service
-          </Text>{" "}
-          and{" "}
-          <Text
-            variant="small"
-            tone="gold"
-            onPress={() => void WebBrowser.openBrowserAsync(`${WEB_URL}/privacy`)}
-          >
-            Privacy Policy
-          </Text>
-          .
+        <Text variant="small" tone="muted">
+          I agree to the terms below
         </Text>
       </Pressable>
+      <View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: "center", paddingLeft: 22 + spacing.md }}>
+        <Text variant="small" tone="muted">
+          Terms:{" "}
+        </Text>
+        <Pressable onPress={() => void WebBrowser.openBrowserAsync(`${WEB_URL}/terms`)} hitSlop={6}>
+          <Text variant="small" tone="gold">
+            Terms of Service
+          </Text>
+        </Pressable>
+        <Text variant="small" tone="muted">
+          {" · "}
+        </Text>
+        <Pressable onPress={() => void WebBrowser.openBrowserAsync(`${WEB_URL}/privacy`)} hitSlop={6}>
+          <Text variant="small" tone="gold">
+            Privacy Policy
+          </Text>
+        </Pressable>
+      </View>
       {errors.acceptedTerms?.message ? (
         <Text variant="caption" tone="ruby">
           {errors.acceptedTerms.message}

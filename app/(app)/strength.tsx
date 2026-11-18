@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import { View } from "react-native";
 
 import { Chip } from "@/components/ui/Chip";
-import { ErrorState, LoadingState } from "@/components/ui/ScreenState";
+import { ErrorState, InlineNotice, LoadingState } from "@/components/ui/ScreenState";
 import { ReportView } from "@/components/ReportView";
 import { Screen } from "@/components/ui/Screen";
-import { InlineNotice } from "@/components/ui/ScreenState";
 import { useAstrologyModule } from "@/hooks/useAstrology";
 import { DISCLAIMER } from "@/lib/constants";
 

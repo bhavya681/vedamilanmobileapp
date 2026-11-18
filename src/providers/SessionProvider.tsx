@@ -97,7 +97,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   }, [qc]);
 
   const signOut = useCallback(async () => {
-    await authApi.signOut();
+    await authApi.signOut().catch(() => undefined);
     await clearLocal();
   }, [clearLocal]);
 

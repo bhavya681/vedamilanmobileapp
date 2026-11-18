@@ -1,5 +1,5 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { ChevronLeft, MessageCircle, Sparkles } from "lucide-react-native";
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -14,7 +14,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { errorMessage } from "@/api/client/errors";
 import { aiApi, type VedaAgentKey } from "@/api/endpoints/ai";
-import { queryKeys } from "@/api/queryKeys";
 import type { AiReply } from "@/api/types/models";
 import { ChatComposer } from "@/components/chat/ChatComposer";
 import { MessageBubble, type ChatBubbleMessage } from "@/components/chat/MessageBubble";
@@ -145,12 +144,6 @@ export default function ChatsTabScreen() {
       setConversationId(undefined);
     }
   }, [agentParam]);
-
-  useQuery({
-    queryKey: queryKeys.ai.conversations(agent?.key),
-    queryFn: () => aiApi.listConversations(agent?.key as VedaAgentKey | undefined),
-    enabled: Boolean(agent),
-  });
 
   const chat = useMutation({
     mutationFn: (message: string) =>

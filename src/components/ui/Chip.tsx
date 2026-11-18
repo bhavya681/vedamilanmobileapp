@@ -1,6 +1,6 @@
 import { Check } from "lucide-react-native";
 import React from "react";
-import { Pressable, StyleSheet } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 
 import { useTheme } from "@/theme/ThemeProvider";
 import { radii, spacing } from "@/theme/tokens";
@@ -21,7 +21,7 @@ export function Chip({ label, selected, onPress, size = "md", tone = "gold" }: P
 
   const content = (
     <>
-      {selected && onPress ? (
+      {selected ? (
         <Check size={13} color={accent} style={{ marginRight: 4 }} strokeWidth={2.4} />
       ) : null}
       <Text
@@ -42,10 +42,11 @@ export function Chip({ label, selected, onPress, size = "md", tone = "gold" }: P
       paddingVertical: size === "sm" ? 5 : 8,
       borderColor: selected ? `${accent}80` : palette.border,
       backgroundColor: selected ? `${accent}14` : palette.raised,
+      minHeight: size === "sm" ? 34 : 40,
     },
   ];
 
-  if (!onPress) return <Pressable style={style} accessible accessibilityLabel={label}>{content}</Pressable>;
+  if (!onPress) return <View style={style}>{content}</View>;
 
   return (
     <Pressable

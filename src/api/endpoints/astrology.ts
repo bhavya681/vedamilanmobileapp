@@ -52,7 +52,7 @@ export type GocharResponse = {
 };
 export type NumerologyResponse = {
   hasDob: boolean;
-  numberCards?: Array<{ number: string | number; planet: string; keyword: string; coreEnergy: string }>;
+  numberCards?: { number: string | number; planet: string; keyword: string; coreEnergy: string }[];
   [key: string]: unknown;
 };
 
@@ -116,10 +116,15 @@ export const astrologyApi = {
     }),
 
   getCelebrities: (id?: string) =>
-    request<{ celebrities?: Celebration[]; total?: number; studio?: unknown } | Celebration[]>(
-      "/astrology/celebrities",
-      { query: { id } },
-    ),
+    request<
+      | {
+          celebrities?: Celebration[];
+          selected?: Record<string, unknown> | null;
+          total?: number;
+          studio?: unknown;
+        }
+      | Celebration[]
+    >("/astrology/celebrities", { query: { id } }),
 
   getMarriagePrecautions: () => request<GenericAstrologyReport>("/matrimony/marriage-precautions"),
 

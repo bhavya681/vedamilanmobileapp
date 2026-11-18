@@ -15,7 +15,7 @@ import { useTheme } from "@/theme/ThemeProvider";
 import { spacing } from "@/theme/tokens";
 import type { PrivacySettings, Profile } from "@/api/types/models";
 
-const TOGGLES: Array<{ key: keyof PrivacySettings; label: string; hint: string }> = [
+const TOGGLES: { key: keyof PrivacySettings; label: string; hint: string }[] = [
   { key: "showAge", label: "Show my age", hint: "Display your age on your profile" },
   { key: "showMoonSign", label: "Show moon sign", hint: "Reveal your Rashi to members" },
   { key: "showLagna", label: "Show lagna", hint: "Reveal your ascendant" },

@@ -12,7 +12,6 @@ import { InlineNotice } from "@/components/ui/ScreenState";
 import { Text } from "@/components/ui/Text";
 import { useRequestPasswordReset } from "@/hooks/useAuthActions";
 import { forgotSchema, type ForgotValues } from "@/lib/validation";
-import { spacing } from "@/theme/tokens";
 
 export default function ForgotPasswordScreen() {
   const router = useRouter();

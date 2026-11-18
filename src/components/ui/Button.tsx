@@ -46,7 +46,7 @@ export function Button({
   style,
 }: Props) {
   const { palette } = useTheme();
-  const isDisabled = disabled || loading;
+  const isDisabled = disabled || loading || !onPress;
 
   const height = size === "sm" ? 40 : size === "lg" ? 54 : 48;
   const paddingH = size === "sm" ? spacing.md : spacing.xl;

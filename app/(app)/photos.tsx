@@ -4,6 +4,8 @@ import { Plus, Star, Trash2 } from "lucide-react-native";
 import React from "react";
 import { Pressable, View } from "react-native";
 
+import { errorMessage } from "@/api/client/errors";
+
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { EmptyState, LoadingState } from "@/components/ui/ScreenState";
@@ -27,28 +29,28 @@ export default function PhotosScreen() {
   const photos = bundle.data?.profile.photos ?? [];
 
   const pick = async () => {
-    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!permission.granted) {
-      toast.show("Photo library access is needed to upload pictures.", "error");
-      return;
-    }
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
-      quality: 0.75,
-      allowsEditing: true,
-      aspect: [4, 5],
-      base64: true,
-    });
-    if (result.canceled || !result.assets[0]?.base64) return;
-    const asset = result.assets[0];
     try {
+      const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (!permission.granted) {
+        toast.show("Photo library access is needed to upload pictures.", "error");
+        return;
+      }
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ["images"],
+        quality: 0.75,
+        allowsEditing: true,
+        aspect: [4, 5],
+        base64: true,
+      });
+      if (result.canceled || !result.assets[0]?.base64) return;
+      const asset = result.assets[0];
       await upload.mutateAsync({
         dataUrl: `data:${asset.mimeType ?? "image/jpeg"};base64,${asset.base64}`,
         makePrimary: photos.length === 0,
       });
       toast.show("Photo uploaded.", "success");
-    } catch {
-      toast.show("Upload failed. Try a smaller image.", "error");
+    } catch (error) {
+      toast.show(errorMessage(error), "error");
     }
   };
 
@@ -74,21 +76,36 @@ export default function PhotosScreen() {
                   <View style={{ flexDirection: "row", justifyContent: "space-between", padding: spacing.sm }}>
                     <Pressable
                       onPress={async () => {
-                        if (!photoUrl(photo)) return;
-                        await upload.mutateAsync({ imageUrl: photoUrl(photo), makePrimary: true });
-                        toast.show("Primary photo updated.", "success");
+                        const url = photoUrl(photo);
+                        if (!url) return;
+                        try {
+                          await upload.mutateAsync({ imageUrl: url, makePrimary: true });
+                          toast.show("Primary photo updated.", "success");
+                        } catch (error) {
+                          toast.show(errorMessage(error), "error");
+                        }
                       }}
+                      accessibilityRole="button"
                       accessibilityLabel="Set as primary photo"
+                      hitSlop={8}
+                      style={{ padding: spacing.sm }}
                     >
                       <Star size={18} color={photo.isPrimary ? palette.gold : palette.textMuted} fill={photo.isPrimary ? palette.gold : "transparent"} />
                     </Pressable>
                     <Pressable
                       onPress={async () => {
                         if (!photo.publicId) return;
-                        await remove.mutateAsync(photo.publicId);
-                        toast.show("Photo removed.", "success");
+                        try {
+                          await remove.mutateAsync(photo.publicId);
+                          toast.show("Photo removed.", "success");
+                        } catch (error) {
+                          toast.show(errorMessage(error), "error");
+                        }
                       }}
+                      accessibilityRole="button"
                       accessibilityLabel="Delete photo"
+                      hitSlop={8}
+                      style={{ padding: spacing.sm }}
                     >
                       <Trash2 size={18} color={palette.ruby} />
                     </Pressable>

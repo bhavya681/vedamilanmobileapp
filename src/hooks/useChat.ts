@@ -50,11 +50,16 @@ export function useSendChatMessage(chatId?: string) {
   const qc = useQueryClient();
   const key = queryKeys.chats.messages(chatId ?? "");
   return useMutation({
-    mutationFn: (input: { body: string; clientMessageId?: string }) =>
+    mutationFn: (input: {
+      body?: string;
+      type?: "TEXT" | "IMAGE" | "VOICE";
+      mediaUrl?: string;
+      mediaPublicId?: string;
+      clientMessageId?: string;
+    }) =>
       chatApi.sendMessage(chatId as string, {
-        body: input.body,
-        type: "TEXT",
-        clientMessageId: input.clientMessageId,
+        ...input,
+        type: input.type ?? "TEXT",
       }),
     onSuccess: ({ message }) => {
       qc.setQueryData<ChatMessagesPage>(key, (current) => mergeMessage(current, message));

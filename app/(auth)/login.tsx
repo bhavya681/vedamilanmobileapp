@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { View } from "react-native";
@@ -16,6 +16,7 @@ import { spacing } from "@/theme/tokens";
 
 export default function LoginScreen() {
   const router = useRouter();
+  const { reset } = useLocalSearchParams<{ reset?: string }>();
   const signIn = useSignIn();
   const {
     control,
@@ -49,6 +50,9 @@ export default function LoginScreen() {
         </View>
       }
     >
+      {reset === "1" ? (
+        <InlineNotice tone="info" body="Your password has been reset. Sign in with your new password." />
+      ) : null}
       {signIn.isError ? (
         <InlineNotice tone="warning" body={errorMessage(signIn.error)} />
       ) : null}

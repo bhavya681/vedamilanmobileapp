@@ -1,7 +1,10 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
+import * as ImagePicker from "expo-image-picker";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, View } from "react-native";
 
+import { errorMessage } from "@/api/client/errors";
+import { chatApi } from "@/api/endpoints/chat";
 import type { ChatMessage } from "@/api/types/models";
 import { ChatComposer } from "@/components/chat/ChatComposer";
 import { MessageBubble, type ChatBubbleMessage } from "@/components/chat/MessageBubble";
@@ -33,6 +36,7 @@ export default function ChatScreen() {
   const router = useRouter();
   const scrollRef = useRef<React.ComponentRef<typeof ScrollView>>(null);
   const [translations, setTranslations] = useState<Record<string, string>>({});
+  const [attaching, setAttaching] = useState(false);
 
   const chatId = typeof id === "string" ? id : undefined;
   const realtime = useChatRealtime(chatId);
@@ -63,6 +67,52 @@ export default function ChatScreen() {
       requestAnimationFrame(() => scrollRef.current?.scrollToEnd({ animated: true }));
     } catch {
       toast.show("Message could not be sent. Try again.", "error");
+    }
+  };
+
+  const attachImage = async () => {
+    if (!chatId || attaching) return;
+    setAttaching(true);
+    try {
+      const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (!permission.granted) {
+        toast.show("Photo library access is needed to share images.", "error");
+        return;
+      }
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ["images"],
+        quality: 0.8,
+      });
+      if (result.canceled) return;
+      const asset = result.assets[0];
+      if (!asset) return;
+      const type = asset.mimeType ?? "image/jpeg";
+      if (!["image/jpeg", "image/png", "image/webp", "image/gif"].includes(type)) {
+        toast.show("Choose a JPEG, PNG, WEBP or GIF image.", "error");
+        return;
+      }
+      const uploaded = await chatApi.uploadMedia(
+        {
+          uri: asset.uri,
+          name: asset.fileName ?? `chat-${Date.now()}.jpg`,
+          type,
+        },
+        "image",
+      );
+      const mediaUrl = uploaded.url ?? uploaded.secureUrl;
+      if (!mediaUrl) throw new Error("Image upload did not return a URL");
+      await send.mutateAsync({
+        body: "",
+        type: "IMAGE",
+        mediaUrl,
+        mediaPublicId: uploaded.publicId ?? undefined,
+        clientMessageId: createClientMessageId(),
+      });
+      toast.show("Image sent.", "success");
+    } catch (error) {
+      toast.show(errorMessage(error), "error");
+    } finally {
+      setAttaching(false);
     }
   };
 
@@ -103,8 +153,9 @@ export default function ChatScreen() {
       return {
         id: bubbleId,
         role: isOwn ? "user" : "assistant",
-        content: message.body ?? (message.mediaUrl ? "[Attachment]" : ""),
+        content: message.body ?? "",
         createdAt: message.createdAt,
+        mediaUrl: message.mediaUrl ?? undefined,
         translated: translations[bubbleId],
         message,
       };
@@ -188,12 +239,14 @@ export default function ChatScreen() {
         )}
         <ChatComposer
           onSend={handleSend}
-          sending={send.isPending}
+          sending={send.isPending || attaching}
           disabled={!chatId}
           onChangeText={(text) => {
             if (text.trim()) notifyTyping();
             else stopTyping();
           }}
+          onAttach={attachImage}
+          attaching={attaching}
           placeholder={`Message ${chatTitle}…`}
         />
         {typeof otherUserId === "string" && otherUserId ? (

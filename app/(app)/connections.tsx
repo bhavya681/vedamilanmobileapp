@@ -27,12 +27,12 @@ type Person = {
 };
 type Hub = {
   interested?: {
-    sent?: Array<Person & { id: string }>;
-    received?: Array<Person & { id: string }>;
+    sent?: (Person & { id: string })[];
+    received?: (Person & { id: string })[];
     mutual?: Person[];
   };
-  requests?: { received?: Array<Person & { id: string }>; sent?: Array<Person & { id: string }> };
-  connected?: Array<Person & { id: string; connectedAt?: string }>;
+  requests?: { received?: (Person & { id: string })[]; sent?: (Person & { id: string })[] };
+  connected?: (Person & { id: string; connectedAt?: string })[];
 };
 
 export default function ConnectionsScreen() {

@@ -2,8 +2,7 @@ import React from "react";
 import { View } from "react-native";
 
 import { ReportView } from "@/components/ReportView";
-import { InlineNotice } from "@/components/ui/ScreenState";
-import { ErrorState, LoadingState } from "@/components/ui/ScreenState";
+import { ErrorState, InlineNotice, LoadingState } from "@/components/ui/ScreenState";
 import { Screen } from "@/components/ui/Screen";
 import { Text } from "@/components/ui/Text";
 import { DISCLAIMER } from "@/lib/constants";

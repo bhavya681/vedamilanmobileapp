@@ -18,8 +18,17 @@ export type VedaAgentKey =
   | "VIRTUAL_ASTROLOGER";
 
 export const aiApi = {
-  listConversations: (agent?: VedaAgentKey) =>
-    request<{ conversations: AiConversation[] }>("/ai/chat", { query: { agent } }),
+  listConversations: async (agent?: VedaAgentKey) => {
+    const result = await request<{ conversations: AiConversation[] }>("/ai/chat", {
+      query: { agent },
+    });
+    return {
+      conversations: (result.conversations ?? []).map((item) => ({
+        ...item,
+        id: item.id ?? String(item._id ?? ""),
+      })),
+    };
+  },
 
   chat: (input: {
     agent: VedaAgentKey;

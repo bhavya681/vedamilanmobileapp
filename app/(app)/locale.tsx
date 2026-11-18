@@ -3,14 +3,14 @@ import { View } from "react-native";
 
 import type { AppLocale, BillingCurrency, LocaleSettings } from "@/api/endpoints/profile";
 import { useToast } from "@/components/feedback/ToastProvider";
+import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Chip } from "@/components/ui/Chip";
 import { Input } from "@/components/ui/Input";
-import { ErrorState, LoadingState } from "@/components/ui/ScreenState";
+import { ErrorState, InlineNotice, LoadingState } from "@/components/ui/ScreenState";
 import { Screen } from "@/components/ui/Screen";
 import { SectionHeader } from "@/components/ui/SectionHeader";
-import { Text } from "@/components/ui/Text";
 import { useLocaleSettings, useSaveLocaleSettings } from "@/hooks/useLocale";
 import { spacing } from "@/theme/tokens";
 
@@ -75,10 +75,11 @@ export default function LocaleScreen() {
         <View style={{ gap: spacing.lg }}>
           <Card style={{ gap: spacing.md }}>
             <SectionHeader title="App language" subtitle="Interface language" />
-            <Text variant="body">English</Text>
-            <Text variant="caption" tone="faint">
-              Additional interface languages are rolling out. Your AI replies can already use another language.
-            </Text>
+            <Badge label="English only" tone="neutral" />
+            <InlineNotice
+              tone="info"
+              body="Interface translations are not available in this release. AI replies can already use another language — choose one below."
+            />
           </Card>
 
           <Card style={{ gap: spacing.md }}>
