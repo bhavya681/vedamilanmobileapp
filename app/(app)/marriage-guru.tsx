@@ -1,37 +1,61 @@
-import { useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
-import React from "react";
-import { View } from "react-native";
+import React, { useState } from "react";
+import { ScrollView } from "react-native";
 
 import { aiApi } from "@/api/endpoints/ai";
-import { Button } from "@/components/ui/Button";
-import { ErrorState, LoadingState, InlineNotice } from "@/components/ui/ScreenState";
-import { ReportView } from "@/components/ReportView";
+import { queryKeys } from "@/api/queryKeys";
+import { AgentChat } from "@/components/ai/AgentChat";
+import { InlineNotice } from "@/components/ui/ScreenState";
 import { Screen } from "@/components/ui/Screen";
+import { BottomSheet } from "@/components/ui/Sheet";
+import { ReportView } from "@/components/ReportView";
 import { DISCLAIMER } from "@/lib/constants";
-import { spacing } from "@/theme/tokens";
+
+const DEFAULT_SUGGESTIONS = [
+  "When is the strongest window for marriage in my chart?",
+  "What qualities should I look for in a partner?",
+  "What do the seventh house and its lord indicate for me?",
+  "How do my current dasha and transits affect marriage timing?",
+];
 
 export default function MarriageGuruScreen() {
-  const router = useRouter();
-  const query = useQuery({ queryKey: ["ai", "marriage-guru"], queryFn: () => aiApi.marriageGuru() });
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const bundle = useQuery({ queryKey: queryKeys.ai.marriageGuru, queryFn: () => aiApi.marriageGuru() });
+  const suggestions = bundle.data?.suggestedPrompts?.length
+    ? bundle.data.suggestedPrompts.slice(0, 5)
+    : DEFAULT_SUGGESTIONS;
 
   return (
-    <Screen title="Marriage Guru" subtitle="Readiness, partner fit, and timing" showBack>
-      {query.isLoading ? (
-        <LoadingState variant="detail" />
-      ) : query.isError ? (
-        <ErrorState error={query.error} onRetry={() => query.refetch()} />
-      ) : (
-        <View style={{ gap: spacing.lg }}>
-          <ReportView data={query.data} />
-          <Button
-            label="Ask the Marriage Guru"
-            variant="gold"
-            onPress={() => router.push({ pathname: "/(tabs)/ai", params: { agent: "MARRIAGE_GURU" } })}
-          />
+    <Screen
+      title="Marriage Guru"
+      subtitle="Readiness, partner fit, and timing"
+      eyebrow="VIVAHA VICHAR"
+      showBack
+      scroll={false}
+      padded={false}
+      edges={["top", "left", "right", "bottom"]}
+    >
+      <AgentChat
+        agent="MARRIAGE_GURU"
+        identity={{
+          title: "Marriage Guru",
+          tagline: "Vedic relationship & timing guide",
+          assistantLabel: "MARRIAGE GURU",
+          welcomeTitle: "Ask the Marriage Guru",
+          welcomeBody:
+            "Discuss readiness, partner tendencies, seventh-house indications, and marriage windows using your saved chart context.",
+          suggestions,
+          reportLabel: "Report",
+          onOpenReport: () => setSheetOpen(true),
+        }}
+      />
+
+      <BottomSheet visible={sheetOpen} onClose={() => setSheetOpen(false)} title="Marriage Guru report">
+        <ScrollView style={{ maxHeight: 480 }} showsVerticalScrollIndicator={false}>
+          <ReportView data={bundle.data ?? {}} />
           <InlineNotice body={DISCLAIMER} />
-        </View>
-      )}
+        </ScrollView>
+      </BottomSheet>
     </Screen>
   );
 }

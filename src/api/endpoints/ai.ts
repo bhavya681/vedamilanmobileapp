@@ -1,5 +1,5 @@
 import { request } from "@/api/client/http";
-import type { AiConversation, AiReply } from "@/api/types/models";
+import type { AiBundle, AiConversation, AiReply } from "@/api/types/models";
 
 export type VedaAgentKey =
   | "ASTROLOGER_GURU"
@@ -42,9 +42,9 @@ export const aiApi = {
       timeoutMs: 60_000,
     }),
 
-  insights: () => request<Record<string, unknown>>("/ai/insights", { timeoutMs: 45_000 }),
+  insights: () => request<AiBundle>("/ai/insights", { timeoutMs: 45_000 }),
 
-  marriageGuru: () => request<Record<string, unknown>>("/ai/marriage-guru", { timeoutMs: 45_000 }),
+  marriageGuru: () => request<AiBundle>("/ai/marriage-guru", { timeoutMs: 45_000 }),
 
   productGuide: (message: string) =>
     request<{ answer: string }>("/ai/guide", { method: "POST", body: { message }, anonymous: true }),

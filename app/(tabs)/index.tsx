@@ -1,15 +1,18 @@
 import { useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import {
+  BookOpen,
   CalendarDays,
   Calculator,
   ChevronRight,
+  Compass,
   HeartHandshake,
   Mic,
   Search,
   Sparkles,
   Star,
   TrendingUp,
+  Users,
   Bell,
 } from "lucide-react-native";
 import React from "react";
@@ -40,10 +43,37 @@ const EXPLORE = [
   { icon: CalendarDays, label: "Panchanga", route: "/(app)/panchanga" as const },
   { icon: Calculator, label: "Numerology", route: "/(app)/numerology" as const },
   { icon: Search, label: "Search", route: "/(app)/search" as const },
-  { icon: Sparkles, label: "Wisdom", route: "/(app)/wisdom" as const },
+  { icon: Sparkles, label: "Rishi & Sages", route: "/(app)/rishi-sages" as const },
   { icon: TrendingUp, label: "Life calendar", route: "/(app)/calendar" as const },
   { icon: Mic, label: "Consult", route: "/(app)/consultations" as const },
   { icon: Star, label: "Celebrities", route: "/(app)/celebrities" as const },
+];
+
+const GUIDANCE = [
+  {
+    icon: Sparkles,
+    label: "Marriage Guru",
+    body: "Readiness, partner tendencies, and timing windows from your chart.",
+    route: "/(app)/marriage-guru" as const,
+  },
+  {
+    icon: BookOpen,
+    label: "AI Guru",
+    body: "Chart-aware answers on dasha, yogas, transits, and life themes.",
+    route: "/(app)/ai-guru" as const,
+  },
+  {
+    icon: Users,
+    label: "Rishi & Sages",
+    body: "Ask Vedic sages or convene a council for one question.",
+    route: "/(app)/rishi-sages" as const,
+  },
+  {
+    icon: Compass,
+    label: "Spiritual Journey",
+    body: "Explore karmic themes, past-life deeds, and your spiritual path.",
+    route: "/(app)/spiritual-journey" as const,
+  },
 ];
 
 function greeting(): string {
@@ -186,7 +216,7 @@ export default function HomeScreen() {
                       variant="ghost"
                       size="sm"
                       textColor={palette.gold}
-                      onPress={() => router.push("/(tabs)/ai")}
+                      onPress={() => router.push("/(app)/ai-guru" as never)}
                       style={{ flex: 1 }}
                     />
                   </View>
@@ -219,16 +249,16 @@ export default function HomeScreen() {
               />
               <QuickTile
                 icon={Sparkles}
-                  label="AI Guide"
-                  value="Ask"
-                  subtitle="Vedic insights"
-                  onPress={() => router.push("/(tabs)/ai")}
+                label="AI Guide"
+                value="Ask"
+                subtitle="Vedic insights"
+                onPress={() => router.push("/(app)/ai-guru" as never)}
               />
               <QuickTile
                 icon={Bell}
-                  label="Notifications"
-                  value="Open"
-                  subtitle="Updates"
+                label="Notifications"
+                value="Open"
+                subtitle="Updates"
                 onPress={() => router.push("/(app)/notifications")}
               />
             </View>
@@ -331,7 +361,7 @@ export default function HomeScreen() {
               {EXPLORE.map(({ icon: Icon, label, route }) => (
                 <Card
                   key={label}
-                  onPress={() => router.push(route)}
+                  onPress={() => router.push(route as never)}
                   padded={false}
                   style={[styles.exploreCard, { borderColor: palette.border }]}
                   accessibilityLabel={label}
@@ -358,25 +388,35 @@ export default function HomeScreen() {
             </View>
           </View>
 
-          <Card
-            tone="gold"
-            onPress={() =>
-              router.push({ pathname: "/(tabs)/ai", params: { agent: "MARRIAGE_GURU" } })
-            }
-            accessibilityLabel="Open Marriage Guru"
-            style={{ gap: spacing.sm }}
-          >
-            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-              <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
-                <Sparkles size={16} color={palette.gold} />
-                <Text variant="label">Marriage Guru</Text>
-              </View>
-              <ChevronRight size={16} color={palette.gold} />
-            </View>
-            <Text variant="small" tone="muted">
-              Understand your readiness, timing windows and the patterns your chart repeats in relationships.
-            </Text>
-          </Card>
+          <View style={{ gap: spacing.md }}>
+            <SectionHeader
+              title="Wisdom & Guidance"
+              subtitle="Chart-grounded answers and living Vedic traditions"
+            />
+            {GUIDANCE.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Card
+                  key={item.label}
+                  tone="gold"
+                  onPress={() => router.push(item.route as never)}
+                  accessibilityLabel={`Open ${item.label}`}
+                  style={{ gap: spacing.sm }}
+                >
+                  <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
+                      <Icon size={16} color={palette.gold} />
+                      <Text variant="label">{item.label}</Text>
+                    </View>
+                    <ChevronRight size={16} color={palette.gold} />
+                  </View>
+                  <Text variant="small" tone="muted">
+                    {item.body}
+                  </Text>
+                </Card>
+              );
+            })}
+          </View>
 
           <Text variant="micro" tone="faint" style={{ textAlign: "center", paddingHorizontal: spacing.lg, marginTop: spacing.xs }}>
             {DISCLAIMER}

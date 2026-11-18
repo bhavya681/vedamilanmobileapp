@@ -1,9 +1,32 @@
 import { request } from "@/api/client/http";
-import type { WisdomBundle } from "@/api/types/models";
+import type { WisdomBundle, WisdomGuide } from "@/api/types/models";
 
 export type WisdomGuideDetail = {
-  guide: Record<string, unknown>;
+  guide: WisdomGuide;
   disclaimer?: string;
+};
+
+export type WisdomChatReply = {
+  conversationId?: string;
+  guideId?: string;
+  guideName?: string;
+  answer?: string;
+  reply?: string;
+  message?: string;
+  disclaimer?: string;
+  model?: string;
+  sources?: string[];
+  messages?: { role: string; content?: string; createdAt?: string }[];
+};
+
+export type WisdomCouncilReply = {
+  conversationId?: string;
+  answer?: string;
+  disclaimer?: string;
+  model?: string;
+  sources?: string[];
+  messages?: { role: string; content?: string; createdAt?: string }[];
+  guides?: { id?: string; name?: string; sources?: string[] }[];
 };
 
 export type WisdomJournalEntry = {
@@ -38,10 +61,22 @@ export const wisdomApi = {
     topic?: string;
     includeLifeContext?: boolean;
   }) =>
-    request<{ reply?: string; message?: string; conversationId?: string; disclaimer?: string }>(
-      "/wisdom",
-      { method: "POST", body: input, timeoutMs: 60_000 },
-    ),
+    request<WisdomChatReply>("/wisdom", {
+      method: "POST",
+      body: input,
+      timeoutMs: 60_000,
+    }),
+
+  council: (input: {
+    message: string;
+    guideIds: string[];
+    need?: string;
+  }) =>
+    request<WisdomCouncilReply>("/wisdom", {
+      method: "POST",
+      body: { mode: "council", ...input },
+      timeoutMs: 60_000,
+    }),
 
   journal: {
     list: () => request<{ entries: WisdomJournalEntry[] }>("/wisdom/journal"),

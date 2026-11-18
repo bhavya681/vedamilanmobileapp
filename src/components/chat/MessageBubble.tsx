@@ -1,4 +1,5 @@
 import { Image } from "expo-image";
+import { Check, Copy } from "lucide-react-native";
 import React from "react";
 import { Pressable, View } from "react-native";
 
@@ -10,11 +11,13 @@ import { timeAgo } from "@/lib/format";
 
 export type ChatBubbleMessage = {
   id: string;
-  role: "user" | "assistant" | "system";
+  role: "user" | "assistant";
   content: string;
   createdAt?: string;
   translated?: string;
-  mediaUrl?: string;
+  mediaUrl?: string | null;
+  mediaType?: "IMAGE" | "VOICE";
+  sources?: string[];
 };
 
 export function MessageBubble({
@@ -22,25 +25,19 @@ export function MessageBubble({
   disclaimer,
   assistantLabel = "AI GURU",
   onLongPress,
+  onCopy,
+  copied,
 }: {
   message: ChatBubbleMessage;
   disclaimer?: string;
   assistantLabel?: string;
   onLongPress?: () => void;
+  onCopy?: () => void;
+  copied?: boolean;
 }) {
   const { palette } = useTheme();
   const isUser = message.role === "user";
-  const isSystem = message.role === "system";
-
-  if (isSystem) {
-    return (
-      <Text variant="micro" tone="faint" align="center" style={{ paddingHorizontal: spacing.xl, marginVertical: spacing.xs }}>
-        {message.content}
-      </Text>
-    );
-  }
-
-  const textColor = isUser ? palette.onAccent : palette.text;
+  const textColor = isUser ? palette.inverseSurface : palette.text;
 
   const bubble = (
     <View
@@ -114,6 +111,41 @@ export function MessageBubble({
         <Text variant="micro" tone="faint" style={{ marginTop: 3 }}>
           {timeAgo(message.createdAt)}
         </Text>
+      ) : null}
+      {!isUser && message.sources?.length ? (
+        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 4, marginTop: 4 }}>
+          {message.sources.map((source) => (
+            <View
+              key={source}
+              style={{
+                paddingHorizontal: 8,
+                paddingVertical: 3,
+                borderRadius: radii.pill,
+                backgroundColor: palette.raised,
+                borderWidth: 1,
+                borderColor: palette.border,
+              }}
+            >
+              <Text variant="micro" tone="faint">
+                {source}
+              </Text>
+            </View>
+          ))}
+        </View>
+      ) : null}
+      {!isUser && onCopy ? (
+        <Pressable
+          onPress={onCopy}
+          accessibilityRole="button"
+          accessibilityLabel={copied ? "Response copied" : "Copy response"}
+          hitSlop={6}
+          style={{ flexDirection: "row", alignItems: "center", gap: 4, marginTop: 2, marginLeft: 4 }}
+        >
+          {copied ? <Check size={12} color={palette.gold} /> : <Copy size={12} color={palette.textMuted} />}
+          <Text variant="micro" tone={copied ? "gold" : "faint"}>
+            {copied ? "Copied" : "Copy"}
+          </Text>
+        </Pressable>
       ) : null}
     </View>
   );

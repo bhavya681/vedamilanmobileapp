@@ -396,6 +396,9 @@ export type AiReply = {
   conversationId?: string;
   disclaimer?: string;
   agent?: string;
+  model?: string;
+  messages?: AiConversationMessage[];
+  ui?: { format?: string; code?: string; disclaimer?: string };
   [key: string]: unknown;
 };
 
@@ -412,7 +415,31 @@ export type AiConversation = {
   agent?: string;
   title?: string;
   updatedAt?: string;
+  createdAt?: string;
+  contextRefs?: Record<string, unknown> | null;
   messages?: AiConversationMessage[];
+};
+
+export type AiBundle = {
+  hasChart?: boolean;
+  openingMessage?: string;
+  suggestedPrompts?: string[];
+  chartSummary?: Record<string, unknown> | null;
+  dasha?: Record<string, unknown> | null;
+  gochar?: Record<string, unknown> | null;
+  yogas?: Record<string, unknown>[];
+  rajaYogas?: Record<string, unknown>[];
+  doshas?: Record<string, unknown>[];
+  marriageWindows?: Record<string, unknown>[];
+  pastMarriageWindows?: Record<string, unknown>[];
+  timingFactors?: Record<string, unknown>[];
+  timingMethodology?: string | null;
+  spouseTendencies?: Record<string, unknown> | null;
+  marryNow?: Record<string, unknown> | null;
+  currentMaha?: string | null;
+  currentAntar?: string | null;
+  disclaimer?: string;
+  [key: string]: unknown;
 };
 
 export type NotificationItem = {
@@ -480,13 +507,42 @@ export type Celebration = {
   [key: string]: unknown;
 };
 
+export type WisdomGuide = {
+  id: string;
+  displayName: string;
+  sanskritName?: string;
+  role?: string;
+  categoryIds?: string[];
+  era?: string;
+  domain?: string;
+  shortPhilosophy?: string;
+  biography?: string;
+  knownFor?: string[];
+  topics?: string[];
+  primarySources?: string[];
+  associatedTexts?: string[];
+  coreTeachings?: string[];
+  knowledgeScope?: string[];
+  limitations?: string[];
+  featuredSage?: boolean;
+  relationshipFocus?: boolean;
+  monogram?: string;
+  accent?: string;
+};
+
+export type WisdomAlignment = {
+  need?: string;
+  context?: Record<string, unknown>;
+  suggestions?: { guide: WisdomGuide; score?: number; reasons?: string[] }[];
+};
+
 export type WisdomBundle = {
-  categories?: { id: string; name: string; description?: string }[];
-  guides?: { id: string; name: string; category?: string; summary?: string; [key: string]: unknown }[];
-  featuredSages?: { id: string; name: string; [key: string]: unknown }[];
-  relationshipGuides?: { id: string; name: string; [key: string]: unknown }[];
+  categories?: { id: string; title?: string; name?: string; description?: string }[];
+  guides?: WisdomGuide[];
+  featuredSages?: WisdomGuide[];
+  relationshipGuides?: WisdomGuide[];
   daily?: { title?: string; body?: string; [key: string]: unknown };
-  needs?: { id: string; label?: string; [key: string]: unknown }[];
-  alignment?: unknown;
+  needs?: { id: string; label?: string; hint?: string }[];
+  alignment?: WisdomAlignment;
   disclaimer?: string;
 };
