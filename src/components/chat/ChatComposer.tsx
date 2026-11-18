@@ -15,6 +15,7 @@ export function ChatComposer({
   onChangeText,
   onAttach,
   attaching,
+  disclaimer = "Guidance is reflective, not predictive certainty.",
 }: {
   onSend: (message: string) => void;
   sending?: boolean;
@@ -23,6 +24,7 @@ export function ChatComposer({
   onChangeText?: (text: string) => void;
   onAttach?: () => void;
   attaching?: boolean;
+  disclaimer?: string | null;
 }) {
   const { palette } = useTheme();
   const [text, setText] = useState("");
@@ -108,9 +110,11 @@ export function ChatComposer({
           )}
         </Pressable>
       </View>
-      <Text variant="micro" tone="faint" style={{ textAlign: "center", marginTop: 4 }}>
-        Guidance is reflective, not predictive certainty.
-      </Text>
+      {disclaimer ? (
+        <Text variant="micro" tone="faint" align="center" style={{ marginTop: 4 }}>
+          {disclaimer}
+        </Text>
+      ) : null}
     </View>
   );
 }

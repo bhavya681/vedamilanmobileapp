@@ -446,16 +446,15 @@ export function SageChat({
         ) : null}
       </ScrollView>
 
-      <ChatComposer onSend={send} sending={reply.isPending} placeholder={`Ask ${identity.title}…`} />
-      <Text
-        variant="micro"
-        tone="faint"
-        align="center"
-        style={{ paddingVertical: 6, paddingHorizontal: spacing.lg }}
-      >
-        {identity.disclaimer ??
-          "Sage guidance is philosophical and scriptural context, not a prediction or professional advice."}
-      </Text>
+      <ChatComposer
+        onSend={send}
+        sending={reply.isPending}
+        placeholder={`Ask ${identity.title}…`}
+        disclaimer={
+          identity.disclaimer ??
+          "Sage guidance is philosophical and scriptural context, not a prediction or professional advice."
+        }
+      />
     </KeyboardAvoidingView>
   );
 }

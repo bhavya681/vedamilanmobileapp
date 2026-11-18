@@ -40,6 +40,7 @@ export default function MarriageGuruScreen() {
         identity={{
           title: "Marriage Guru",
           tagline: "Vedic relationship & timing guide",
+          monogram: "MG",
           assistantLabel: "MARRIAGE GURU",
           welcomeTitle: "Ask the Marriage Guru",
           welcomeBody:

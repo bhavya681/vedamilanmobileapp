@@ -21,18 +21,14 @@ export default function AiGuruScreen() {
         agent="ASTROLOGER_GURU"
         identity={{
           title: "AI Guru",
-          tagline: "Your chart-aware Vedic guide",
+          tagline: "Chart-aware Vedic guidance",
+          monogram: "AG",
           assistantLabel: "AI GURU",
           welcomeTitle: "Ask your AI Guru",
           welcomeBody:
-            "Get grounded guidance from your saved birth chart, dasha, and transits. No fabricated planetary positions, no false predictions.",
-          suggestions: [
-            "Summarize my birth chart in simple language",
-            "What are the strongest yogas in my chart?",
-            "What does my current dasha mean for career?",
-            "How do my current transits affect relationships?",
-          ],
-          reportLabel: "Chart report",
+            "Clear, chart-grounded answers about your dasha, yogas, transits, and life themes.",
+          suggestions: ["Summarize my birth chart", "What does my dasha indicate?"],
+          reportLabel: "Report",
           onOpenReport: () => router.push("/(app)/insights" as never),
         }}
       />
